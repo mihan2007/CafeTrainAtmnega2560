@@ -38,6 +38,12 @@
 #define RailSwitchL_5 PC4
 #define RailSwitchR_5 PC3
 
+#define TableSwitch_1 PL0 // D49
+#define TableSwitch_2 PL1 // D48
+#define TableSwitch_3 PL2 // D47
+#define TableSwitch_4 PL3 // D46
+#define TableSwitch_5 PL4 // D45
+
 #define Gear_1_Pin PD3
 #define Gear_2_Pin PD2
 #define Gear_3_Pin PD1
@@ -177,7 +183,6 @@ void MoveTrain(bool direction)
 	MakeTrainMove();
 }
 
-
 void SetLEDMove (bool forwardLED, bool backwardLED)
 {
 	PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
@@ -193,11 +198,8 @@ void SetLEDMove (bool forwardLED, bool backwardLED)
 }
 	
 
-
 int main(void)
 {
-
-
 	// PF Настройка портов кнопок переключения столов как вход
 	DDRF = 0x00; // Установка всех битов порта PF в 0 (входы)
 	//Установка PB в качестве входов кнопок
@@ -211,8 +213,7 @@ int main(void)
 	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
 	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4) | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
 	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin);
-
-	int ChosenTableNumber = 0; // переменная выбранного стола
+	DDRL |= (1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5);
 
 
 	while (1)
