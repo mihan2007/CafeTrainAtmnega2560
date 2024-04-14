@@ -61,22 +61,28 @@ void AdjustWay(int ChosenTable)
 	switch (ChosenTable) 
 	{
 		case 1:
+		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 		PORTA |= (1 << RailSwitchL_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_1);
+		
+		PORTL |= (1 << TableSwitch_1);
 		break;
 		
 		case 2:
-		PORTA |= (1 << RailSwitchR_1);
+		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
 	
 		PORTA |= (1 << RailSwitchL_2);
 		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchL_2);	
+		PORTA &= ~ (1 << RailSwitchL_2);
+		
+		PORTL |= (1 << TableSwitch_2);	
 		break;
 		
-		case 3:	
+		case 3:
+		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -88,9 +94,12 @@ void AdjustWay(int ChosenTable)
 		PORTA |= (1 << RailSwitchL_3);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_3);
+		
+		PORTL |= (1 << TableSwitch_3);		
 		break;
 		
 		case 4:
+		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -106,9 +115,12 @@ void AdjustWay(int ChosenTable)
 		PORTC |= (1 << RailSwitchL_4);
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_4);
+	
+		PORTL |= (1 << TableSwitch_4);
 		break;
 		
 		case 5:
+		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -128,7 +140,8 @@ void AdjustWay(int ChosenTable)
 		PORTC |=  (1 << RailSwitchL_5);
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_5);
-	
+
+		PORTL |= (1 << TableSwitch_5);	
 		break;
 		
 		default:
@@ -149,12 +162,15 @@ void TurnOnButtonLED(int ChosenTable)
 
 void StopTrain()
 {
-	PORTD &= ~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
+	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
 	PORTA &=~ (1 << ReversPin);
+	//PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 }
 
+
+
 void MakeTrainMove() 
-{
+{	
 	PORTD |= (1 << Gear_1_Pin);
 	_delay_ms(500);
 	PORTD |= (1 << Gear_2_Pin);
@@ -235,7 +251,7 @@ int main(void)
 
 			if (!(PINF & (1 << TableButton_3)))
 			{
-				TurnOnButtonLED(3); // Включение светодиода для стола
+				TurnOnButtonLED(3); // Включение светодиода для столатакое
 				AdjustWay(3);       // Передача указателя на порт для стола 1
 			}
 
@@ -254,16 +270,22 @@ int main(void)
 
 		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
 		{
-			SetLEDMove(1,0);
-			MoveTrain(1);
-			IsTrainMoving = true; 
+			if (IsTrainMoving == false)
+			{
+				SetLEDMove(1,0);
+				MoveTrain(1);
+				IsTrainMoving = true;
+			}
 		}
 
 		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
 		{
+			if (IsTrainMoving == false)
+			{		
 			SetLEDMove(0,1);
 			MoveTrain(0);
 			IsTrainMoving = true;
+			}
 		}
 
 
@@ -271,7 +293,7 @@ int main(void)
 		{
 			SetLEDMove(0,0);
 			StopTrain();
-			IsTrainMoving = false;
+			IsTrainMoving = false; // останавливаем поезд
 		}
 		
 		_delay_ms(50);
