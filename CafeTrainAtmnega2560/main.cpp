@@ -38,11 +38,11 @@
 #define RailSwitchL_5 PC4
 #define RailSwitchR_5 PC3
 
-#define TableSwitch_1 PL0 // D49
-#define TableSwitch_2 PL1 // D48
-#define TableSwitch_3 PL2 // D47
-#define TableSwitch_4 PL3 // D46
-#define TableSwitch_5 PL4 // D45
+#define TableSensor_1 PL0 // D49
+#define TableSensor_2 PL1 // D48
+#define TableSensor_3 PL2 // D47
+#define TableSensor_4 PL3 // D46
+#define TableSensor_5 PL4 // D45
 
 #define Gear_1_Pin PD3
 #define Gear_2_Pin PD2
@@ -61,16 +61,16 @@ void AdjustWay(int ChosenTable)
 	switch (ChosenTable) 
 	{
 		case 1:
-		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
+
 		PORTA |= (1 << RailSwitchL_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_1);
 		
-		PORTL |= (1 << TableSwitch_1);
+
 		break;
 		
 		case 2:
-		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
+
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
 	
@@ -78,11 +78,10 @@ void AdjustWay(int ChosenTable)
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_2);
 		
-		PORTL |= (1 << TableSwitch_2);	
 		break;
 		
 		case 3:
-		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
+
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -95,11 +94,11 @@ void AdjustWay(int ChosenTable)
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_3);
 		
-		PORTL |= (1 << TableSwitch_3);		
+		
 		break;
 		
 		case 4:
-		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
+
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -116,11 +115,11 @@ void AdjustWay(int ChosenTable)
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_4);
 	
-		PORTL |= (1 << TableSwitch_4);
+
 		break;
 		
 		case 5:
-		PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
+
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
@@ -141,7 +140,6 @@ void AdjustWay(int ChosenTable)
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_5);
 
-		PORTL |= (1 << TableSwitch_5);	
 		break;
 		
 		default:
@@ -164,7 +162,6 @@ void StopTrain()
 {
 	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
 	PORTA &=~ (1 << ReversPin);
-	//PORTL &=~ ((1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5));
 }
 
 
@@ -229,7 +226,7 @@ int main(void)
 	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
 	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4) | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
 	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin);
-	DDRL |= (1 << TableSwitch_1) | (1<<TableSwitch_2) | (1<< TableSwitch_3) | (1 << TableSwitch_4) | (1 << TableSwitch_5);
+	DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
 
 
 	while (1)
