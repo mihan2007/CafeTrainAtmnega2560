@@ -35,8 +35,8 @@
 #define RailSwitchL_4 PC5
 #define RailSwitchR_4 PC6
 
-#define RailSwitchL_5 PC4
-#define RailSwitchR_5 PC3
+//#define RailSwitchL_5 PC4
+//#define RailSwitchR_5 PC3
 
 #define TableSensor_1 PL0 // D49
 #define TableSensor_2 PL1 // D48
@@ -51,6 +51,10 @@
 
 bool IsTrainMoving = false;
 bool IsTableChosen = false;
+bool IsTrainMoveForward = false;
+bool IsTrainMoveBackward = false;
+
+int ChoisenTableNumber = 0; 
 
 void AdjustWay(int ChosenTable)
 {
@@ -70,7 +74,7 @@ void AdjustWay(int ChosenTable)
 		break;
 		
 		case 2:
-
+		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
 	
@@ -114,7 +118,6 @@ void AdjustWay(int ChosenTable)
 		PORTC |= (1 << RailSwitchL_4);
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_4);
-	
 
 		break;
 		
@@ -135,10 +138,6 @@ void AdjustWay(int ChosenTable)
 		PORTC |= (1 << RailSwitchR_4);
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchR_4);
-	
-		PORTC |=  (1 << RailSwitchL_5);
-		_delay_ms(DelayBWRailSwitch);
-		PORTC &= ~ (1 << RailSwitchL_5);
 
 		break;
 		
@@ -168,12 +167,13 @@ void StopTrain()
 
 void MakeTrainMove() 
 {	
+	int stepDelay = 1000; 
 	PORTD |= (1 << Gear_1_Pin);
-	_delay_ms(500);
+	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_2_Pin);
-	_delay_ms(500);
+	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_3_Pin);
-	_delay_ms(500);
+	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_4_Pin);	
 }
 
@@ -224,9 +224,9 @@ int main(void)
 
 	// Настройка портов Стрелок как выходов
 	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
-	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4) | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
+	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4); // | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
 	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin);
-	DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
+	//DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
 
 
 	while (1)
@@ -267,22 +267,18 @@ int main(void)
 
 		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
 		{
-			if (IsTrainMoving == false)
-			{
+
 				SetLEDMove(1,0);
 				MoveTrain(1);
-				IsTrainMoving = true;
-			}
+				
 		}
 
 		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
 		{
-			if (IsTrainMoving == false)
-			{		
+		
 			SetLEDMove(0,1);
 			MoveTrain(0);
-			IsTrainMoving = true;
-			}
+
 		}
 
 
