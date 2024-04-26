@@ -19,7 +19,7 @@
 #define TableLED_5 PK4
 
 #define MoveForwarLED PK6
-#define MoveBackwardLED PK7 // Исправлено название переменной на MoveBackwardLED
+#define MoveBackwardLED PK7 
 
 #define ReversPin PA1
 
@@ -35,8 +35,7 @@
 #define RailSwitchL_4 PC5
 #define RailSwitchR_4 PC6
 
-//#define RailSwitchL_5 PC4
-//#define RailSwitchR_5 PC3
+#define EndWaySensor PC2
 
 #define TableSensor_1 PL0 // D49
 #define TableSensor_2 PL1 // D48
@@ -51,13 +50,14 @@
 
 bool IsTrainMoving = false;
 bool IsTableChosen = false;
-bool IsTrainMoveForward = false;
-bool IsTrainMoveBackward = false;
+
 
 int ChoisenTableNumber = 0; 
 
 void AdjustWay(int ChosenTable)
 {
+	ChoisenTableNumber = ChosenTable;
+	
 	int DelayBWRailSwitch = 1000;
 	
 	IsTableChosen = true;
@@ -147,7 +147,6 @@ void AdjustWay(int ChosenTable)
 	}
 }
 
-
 void TurnOnButtonLED(int ChosenTable)
 {
 	// Выключаем все светодиоды
@@ -156,14 +155,12 @@ void TurnOnButtonLED(int ChosenTable)
 	PORTK |= (1 << (ChosenTable - 1));
 }
 
-
 void StopTrain()
 {
+	IsTrainMoving = false;
 	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
 	PORTA &=~ (1 << ReversPin);
 }
-
-
 
 void MakeTrainMove() 
 {	
@@ -175,23 +172,25 @@ void MakeTrainMove()
 	PORTD |= (1 << Gear_3_Pin);
 	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_4_Pin);	
+	
+	IsTrainMoving = true;
 }
 
 void MoveTrain(bool direction)
 {	
 
-	if (direction == 1 && PINA & (1 << ReversPin) )
+	if (direction == 1 && PINA & (1 << ReversPin))
 	{
 		StopTrain();
 		PORTA &=~ (1 << ReversPin);
+	}
 
-	}
-	
 	if (direction == 0 && !(PINA & (1 << ReversPin)))
-	{	
-		StopTrain();	
-		PORTA |= (1<< ReversPin);
+	{
+		StopTrain();
+		PORTA |= (1 << ReversPin);
 	}
+
 
 	MakeTrainMove();
 }
@@ -209,8 +208,19 @@ void SetLEDMove (bool forwardLED, bool backwardLED)
 		PORTK|= (1 << MoveBackwardLED);		
 	}
 }
-	
 
+void SlowMode () 
+{
+	int stepDelay = 50; 
+	PORTD &= ~ (1 << Gear_1_Pin);
+	_delay_ms(stepDelay);
+	PORTD &= ~ (1 << Gear_2_Pin);
+	_delay_ms(stepDelay);
+	PORTD |= (1 << Gear_3_Pin);
+	_delay_ms(stepDelay);
+	PORTD |= (1 << Gear_4_Pin);	
+}
+	
 int main(void)
 {
 	// PF Настройка портов кнопок переключения столов как вход
@@ -224,13 +234,20 @@ int main(void)
 
 	// Настройка портов Стрелок как выходов
 	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
-	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4); // | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
+	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4); // | (1 << EndWaySensor); //| (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
 	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin);
-	//DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
+	
+	// Насстройка порта выключателя концевого выключателя
+	DDRC &= ~(1 << EndWaySensor);
+	
+	// Настраиваем порты датчика перехода на тихий ход
+	
+	DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
 
 
 	while (1)
 	{
+		
 		if (IsTrainMoving == false)
 		{
 			// Проверяем нажатие кнопок и выполняем соответствующие действия
@@ -267,18 +284,14 @@ int main(void)
 
 		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
 		{
-
-				SetLEDMove(1,0);
-				MoveTrain(1);
-				
+			SetLEDMove(1,0);
+			MoveTrain(1);	
 		}
 
 		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
-		{
-		
+		{		
 			SetLEDMove(0,1);
 			MoveTrain(0);
-
 		}
 
 
@@ -286,12 +299,22 @@ int main(void)
 		{
 			SetLEDMove(0,0);
 			StopTrain();
-			IsTrainMoving = false; // останавливаем поезд
 		}
 		
+		
+		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
+		{
+			StopTrain();
+		}
+
+		if (!(PINL & (1 << TableSensor_1))&& !(PINA & (1 << ReversPin))) 
+		{
+			SlowMode();
+		}		
 		_delay_ms(50);
 		
 	}
 
 	return 0;
+	
 }

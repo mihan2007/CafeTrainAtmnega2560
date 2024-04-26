@@ -3,31 +3,31 @@ CafeTrainAtmnega2560.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800200  00800200  00000512  2**0
+  0 .data         00000000  00800200  00800200  0000059e  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000049e  00000000  00000000  00000074  2**1
+  1 .text         0000052a  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000002  00800200  00800200  00000512  2**0
+  2 .bss          00000004  00800200  00800200  0000059e  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000512  2**0
+  3 .comment      00000030  00000000  00000000  0000059e  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000544  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000005d0  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000050  00000000  00000000  00000584  2**0
+  5 .debug_aranges 00000058  00000000  00000000  00000610  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   0000138c  00000000  00000000  000005d4  2**0
+  6 .debug_info   0000144b  00000000  00000000  00000668  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000cd2  00000000  00000000  00001960  2**0
+  7 .debug_abbrev 00000ce1  00000000  00000000  00001ab3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000006aa  00000000  00000000  00002632  2**0
+  8 .debug_line   00000759  00000000  00000000  00002794  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  0000008c  00000000  00000000  00002cdc  2**2
+  9 .debug_frame  0000009c  00000000  00000000  00002ef0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000702  00000000  00000000  00002d68  2**0
+ 10 .debug_str    000006f1  00000000  00000000  00002f8c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000634  00000000  00000000  0000346a  2**0
+ 11 .debug_loc    00000751  00000000  00000000  0000367d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000040  00000000  00000000  00003a9e  2**0
+ 12 .debug_ranges 00000048  00000000  00000000  00003dce  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -168,706 +168,805 @@ Disassembly of section .text:
   fc:	1d 92       	st	X+, r1
 
 000000fe <.do_clear_bss_start>:
-  fe:	a2 30       	cpi	r26, 0x02	; 2
+  fe:	a4 30       	cpi	r26, 0x04	; 4
  100:	b2 07       	cpc	r27, r18
  102:	e1 f7       	brne	.-8      	; 0xfc <.do_clear_bss_loop>
- 104:	63 d1       	rcall	.+710    	; 0x3cc <main>
- 106:	c9 c1       	rjmp	.+914    	; 0x49a <_exit>
+ 104:	8b d1       	rcall	.+790    	; 0x41c <main>
+ 106:	0f c2       	rjmp	.+1054   	; 0x526 <_exit>
 
 00000108 <__bad_interrupt>:
  108:	7b cf       	rjmp	.-266    	; 0x0 <__vectors>
 
 0000010a <_Z9AdjustWayi>:
 
+int ChoisenTableNumber = 0; 
+
 void AdjustWay(int ChosenTable)
 {
+	ChoisenTableNumber = ChosenTable;
+ 10a:	90 93 01 02 	sts	0x0201, r25	; 0x800201 <__DATA_REGION_ORIGIN__+0x1>
+ 10e:	80 93 00 02 	sts	0x0200, r24	; 0x800200 <__DATA_REGION_ORIGIN__>
+	
 	int DelayBWRailSwitch = 1000;
 	
 	IsTableChosen = true;
- 10a:	21 e0       	ldi	r18, 0x01	; 1
- 10c:	20 93 00 02 	sts	0x0200, r18	; 0x800200 <__DATA_REGION_ORIGIN__>
+ 112:	21 e0       	ldi	r18, 0x01	; 1
+ 114:	20 93 02 02 	sts	0x0202, r18	; 0x800202 <IsTableChosen>
 	
 	switch (ChosenTable) 
- 110:	83 30       	cpi	r24, 0x03	; 3
- 112:	91 05       	cpc	r25, r1
- 114:	f1 f1       	breq	.+124    	; 0x192 <_Z9AdjustWayi+0x88>
- 116:	34 f4       	brge	.+12     	; 0x124 <_Z9AdjustWayi+0x1a>
- 118:	81 30       	cpi	r24, 0x01	; 1
+ 118:	83 30       	cpi	r24, 0x03	; 3
  11a:	91 05       	cpc	r25, r1
- 11c:	59 f0       	breq	.+22     	; 0x134 <_Z9AdjustWayi+0x2a>
- 11e:	02 97       	sbiw	r24, 0x02	; 2
- 120:	c9 f0       	breq	.+50     	; 0x154 <_Z9AdjustWayi+0x4a>
- 122:	08 95       	ret
- 124:	84 30       	cpi	r24, 0x04	; 4
- 126:	91 05       	cpc	r25, r1
- 128:	09 f4       	brne	.+2      	; 0x12c <_Z9AdjustWayi+0x22>
- 12a:	61 c0       	rjmp	.+194    	; 0x1ee <_Z9AdjustWayi+0xe4>
- 12c:	05 97       	sbiw	r24, 0x05	; 5
- 12e:	09 f4       	brne	.+2      	; 0x132 <_Z9AdjustWayi+0x28>
- 130:	9b c0       	rjmp	.+310    	; 0x268 <_Z9AdjustWayi+0x15e>
- 132:	08 95       	ret
+ 11c:	f1 f1       	breq	.+124    	; 0x19a <_Z9AdjustWayi+0x90>
+ 11e:	34 f4       	brge	.+12     	; 0x12c <_Z9AdjustWayi+0x22>
+ 120:	81 30       	cpi	r24, 0x01	; 1
+ 122:	91 05       	cpc	r25, r1
+ 124:	59 f0       	breq	.+22     	; 0x13c <_Z9AdjustWayi+0x32>
+ 126:	02 97       	sbiw	r24, 0x02	; 2
+ 128:	c9 f0       	breq	.+50     	; 0x15c <_Z9AdjustWayi+0x52>
+ 12a:	08 95       	ret
+ 12c:	84 30       	cpi	r24, 0x04	; 4
+ 12e:	91 05       	cpc	r25, r1
+ 130:	09 f4       	brne	.+2      	; 0x134 <_Z9AdjustWayi+0x2a>
+ 132:	61 c0       	rjmp	.+194    	; 0x1f6 <_Z9AdjustWayi+0xec>
+ 134:	05 97       	sbiw	r24, 0x05	; 5
+ 136:	09 f4       	brne	.+2      	; 0x13a <_Z9AdjustWayi+0x30>
+ 138:	9b c0       	rjmp	.+310    	; 0x270 <_Z9AdjustWayi+0x166>
+ 13a:	08 95       	ret
 	{
 		case 1:
 
 		PORTA |= (1 << RailSwitchL_1);
- 134:	82 b1       	in	r24, 0x02	; 2
- 136:	84 60       	ori	r24, 0x04	; 4
- 138:	82 b9       	out	0x02, r24	; 2
+ 13c:	82 b1       	in	r24, 0x02	; 2
+ 13e:	84 60       	ori	r24, 0x04	; 4
+ 140:	82 b9       	out	0x02, r24	; 2
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 13a:	2f e3       	ldi	r18, 0x3F	; 63
- 13c:	8d e0       	ldi	r24, 0x0D	; 13
- 13e:	93 e0       	ldi	r25, 0x03	; 3
- 140:	21 50       	subi	r18, 0x01	; 1
- 142:	80 40       	sbci	r24, 0x00	; 0
- 144:	90 40       	sbci	r25, 0x00	; 0
- 146:	e1 f7       	brne	.-8      	; 0x140 <_Z9AdjustWayi+0x36>
- 148:	00 c0       	rjmp	.+0      	; 0x14a <_Z9AdjustWayi+0x40>
- 14a:	00 00       	nop
+ 142:	2f e3       	ldi	r18, 0x3F	; 63
+ 144:	8d e0       	ldi	r24, 0x0D	; 13
+ 146:	93 e0       	ldi	r25, 0x03	; 3
+ 148:	21 50       	subi	r18, 0x01	; 1
+ 14a:	80 40       	sbci	r24, 0x00	; 0
+ 14c:	90 40       	sbci	r25, 0x00	; 0
+ 14e:	e1 f7       	brne	.-8      	; 0x148 <_Z9AdjustWayi+0x3e>
+ 150:	00 c0       	rjmp	.+0      	; 0x152 <_Z9AdjustWayi+0x48>
+ 152:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_1);
- 14c:	82 b1       	in	r24, 0x02	; 2
- 14e:	8b 7f       	andi	r24, 0xFB	; 251
- 150:	82 b9       	out	0x02, r24	; 2
+ 154:	82 b1       	in	r24, 0x02	; 2
+ 156:	8b 7f       	andi	r24, 0xFB	; 251
+ 158:	82 b9       	out	0x02, r24	; 2
 		
 
 		break;
- 152:	08 95       	ret
+ 15a:	08 95       	ret
 		
 		case 2:
 		PORTA |= (1 << RailSwitchR_1);
- 154:	82 b1       	in	r24, 0x02	; 2
- 156:	88 60       	ori	r24, 0x08	; 8
- 158:	82 b9       	out	0x02, r24	; 2
- 15a:	2f e3       	ldi	r18, 0x3F	; 63
- 15c:	8d e0       	ldi	r24, 0x0D	; 13
- 15e:	93 e0       	ldi	r25, 0x03	; 3
- 160:	21 50       	subi	r18, 0x01	; 1
- 162:	80 40       	sbci	r24, 0x00	; 0
- 164:	90 40       	sbci	r25, 0x00	; 0
- 166:	e1 f7       	brne	.-8      	; 0x160 <_Z9AdjustWayi+0x56>
- 168:	00 c0       	rjmp	.+0      	; 0x16a <_Z9AdjustWayi+0x60>
- 16a:	00 00       	nop
+ 15c:	82 b1       	in	r24, 0x02	; 2
+ 15e:	88 60       	ori	r24, 0x08	; 8
+ 160:	82 b9       	out	0x02, r24	; 2
+ 162:	2f e3       	ldi	r18, 0x3F	; 63
+ 164:	8d e0       	ldi	r24, 0x0D	; 13
+ 166:	93 e0       	ldi	r25, 0x03	; 3
+ 168:	21 50       	subi	r18, 0x01	; 1
+ 16a:	80 40       	sbci	r24, 0x00	; 0
+ 16c:	90 40       	sbci	r25, 0x00	; 0
+ 16e:	e1 f7       	brne	.-8      	; 0x168 <_Z9AdjustWayi+0x5e>
+ 170:	00 c0       	rjmp	.+0      	; 0x172 <_Z9AdjustWayi+0x68>
+ 172:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
- 16c:	82 b1       	in	r24, 0x02	; 2
- 16e:	87 7f       	andi	r24, 0xF7	; 247
- 170:	82 b9       	out	0x02, r24	; 2
+ 174:	82 b1       	in	r24, 0x02	; 2
+ 176:	87 7f       	andi	r24, 0xF7	; 247
+ 178:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchL_2);
- 172:	82 b1       	in	r24, 0x02	; 2
- 174:	80 61       	ori	r24, 0x10	; 16
- 176:	82 b9       	out	0x02, r24	; 2
- 178:	2f e3       	ldi	r18, 0x3F	; 63
- 17a:	8d e0       	ldi	r24, 0x0D	; 13
- 17c:	93 e0       	ldi	r25, 0x03	; 3
- 17e:	21 50       	subi	r18, 0x01	; 1
- 180:	80 40       	sbci	r24, 0x00	; 0
- 182:	90 40       	sbci	r25, 0x00	; 0
- 184:	e1 f7       	brne	.-8      	; 0x17e <_Z9AdjustWayi+0x74>
- 186:	00 c0       	rjmp	.+0      	; 0x188 <_Z9AdjustWayi+0x7e>
- 188:	00 00       	nop
+ 17a:	82 b1       	in	r24, 0x02	; 2
+ 17c:	80 61       	ori	r24, 0x10	; 16
+ 17e:	82 b9       	out	0x02, r24	; 2
+ 180:	2f e3       	ldi	r18, 0x3F	; 63
+ 182:	8d e0       	ldi	r24, 0x0D	; 13
+ 184:	93 e0       	ldi	r25, 0x03	; 3
+ 186:	21 50       	subi	r18, 0x01	; 1
+ 188:	80 40       	sbci	r24, 0x00	; 0
+ 18a:	90 40       	sbci	r25, 0x00	; 0
+ 18c:	e1 f7       	brne	.-8      	; 0x186 <_Z9AdjustWayi+0x7c>
+ 18e:	00 c0       	rjmp	.+0      	; 0x190 <_Z9AdjustWayi+0x86>
+ 190:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_2);
- 18a:	82 b1       	in	r24, 0x02	; 2
- 18c:	8f 7e       	andi	r24, 0xEF	; 239
- 18e:	82 b9       	out	0x02, r24	; 2
+ 192:	82 b1       	in	r24, 0x02	; 2
+ 194:	8f 7e       	andi	r24, 0xEF	; 239
+ 196:	82 b9       	out	0x02, r24	; 2
 		
 		break;
- 190:	08 95       	ret
+ 198:	08 95       	ret
 		
 		case 3:
 
 		PORTA |= (1 << RailSwitchR_1);
- 192:	82 b1       	in	r24, 0x02	; 2
- 194:	88 60       	ori	r24, 0x08	; 8
- 196:	82 b9       	out	0x02, r24	; 2
- 198:	2f e3       	ldi	r18, 0x3F	; 63
- 19a:	8d e0       	ldi	r24, 0x0D	; 13
- 19c:	93 e0       	ldi	r25, 0x03	; 3
- 19e:	21 50       	subi	r18, 0x01	; 1
- 1a0:	80 40       	sbci	r24, 0x00	; 0
- 1a2:	90 40       	sbci	r25, 0x00	; 0
- 1a4:	e1 f7       	brne	.-8      	; 0x19e <_Z9AdjustWayi+0x94>
- 1a6:	00 c0       	rjmp	.+0      	; 0x1a8 <_Z9AdjustWayi+0x9e>
- 1a8:	00 00       	nop
+ 19a:	82 b1       	in	r24, 0x02	; 2
+ 19c:	88 60       	ori	r24, 0x08	; 8
+ 19e:	82 b9       	out	0x02, r24	; 2
+ 1a0:	2f e3       	ldi	r18, 0x3F	; 63
+ 1a2:	8d e0       	ldi	r24, 0x0D	; 13
+ 1a4:	93 e0       	ldi	r25, 0x03	; 3
+ 1a6:	21 50       	subi	r18, 0x01	; 1
+ 1a8:	80 40       	sbci	r24, 0x00	; 0
+ 1aa:	90 40       	sbci	r25, 0x00	; 0
+ 1ac:	e1 f7       	brne	.-8      	; 0x1a6 <_Z9AdjustWayi+0x9c>
+ 1ae:	00 c0       	rjmp	.+0      	; 0x1b0 <_Z9AdjustWayi+0xa6>
+ 1b0:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
- 1aa:	82 b1       	in	r24, 0x02	; 2
- 1ac:	87 7f       	andi	r24, 0xF7	; 247
- 1ae:	82 b9       	out	0x02, r24	; 2
+ 1b2:	82 b1       	in	r24, 0x02	; 2
+ 1b4:	87 7f       	andi	r24, 0xF7	; 247
+ 1b6:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchR_2);
- 1b0:	82 b1       	in	r24, 0x02	; 2
- 1b2:	80 62       	ori	r24, 0x20	; 32
- 1b4:	82 b9       	out	0x02, r24	; 2
- 1b6:	2f e3       	ldi	r18, 0x3F	; 63
- 1b8:	8d e0       	ldi	r24, 0x0D	; 13
- 1ba:	93 e0       	ldi	r25, 0x03	; 3
- 1bc:	21 50       	subi	r18, 0x01	; 1
- 1be:	80 40       	sbci	r24, 0x00	; 0
- 1c0:	90 40       	sbci	r25, 0x00	; 0
- 1c2:	e1 f7       	brne	.-8      	; 0x1bc <_Z9AdjustWayi+0xb2>
- 1c4:	00 c0       	rjmp	.+0      	; 0x1c6 <_Z9AdjustWayi+0xbc>
- 1c6:	00 00       	nop
+ 1b8:	82 b1       	in	r24, 0x02	; 2
+ 1ba:	80 62       	ori	r24, 0x20	; 32
+ 1bc:	82 b9       	out	0x02, r24	; 2
+ 1be:	2f e3       	ldi	r18, 0x3F	; 63
+ 1c0:	8d e0       	ldi	r24, 0x0D	; 13
+ 1c2:	93 e0       	ldi	r25, 0x03	; 3
+ 1c4:	21 50       	subi	r18, 0x01	; 1
+ 1c6:	80 40       	sbci	r24, 0x00	; 0
+ 1c8:	90 40       	sbci	r25, 0x00	; 0
+ 1ca:	e1 f7       	brne	.-8      	; 0x1c4 <_Z9AdjustWayi+0xba>
+ 1cc:	00 c0       	rjmp	.+0      	; 0x1ce <_Z9AdjustWayi+0xc4>
+ 1ce:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_2);
- 1c8:	82 b1       	in	r24, 0x02	; 2
- 1ca:	8f 7d       	andi	r24, 0xDF	; 223
- 1cc:	82 b9       	out	0x02, r24	; 2
+ 1d0:	82 b1       	in	r24, 0x02	; 2
+ 1d2:	8f 7d       	andi	r24, 0xDF	; 223
+ 1d4:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchL_3);
- 1ce:	82 b1       	in	r24, 0x02	; 2
- 1d0:	80 64       	ori	r24, 0x40	; 64
- 1d2:	82 b9       	out	0x02, r24	; 2
- 1d4:	2f e3       	ldi	r18, 0x3F	; 63
- 1d6:	8d e0       	ldi	r24, 0x0D	; 13
- 1d8:	93 e0       	ldi	r25, 0x03	; 3
- 1da:	21 50       	subi	r18, 0x01	; 1
- 1dc:	80 40       	sbci	r24, 0x00	; 0
- 1de:	90 40       	sbci	r25, 0x00	; 0
- 1e0:	e1 f7       	brne	.-8      	; 0x1da <_Z9AdjustWayi+0xd0>
- 1e2:	00 c0       	rjmp	.+0      	; 0x1e4 <_Z9AdjustWayi+0xda>
- 1e4:	00 00       	nop
+ 1d6:	82 b1       	in	r24, 0x02	; 2
+ 1d8:	80 64       	ori	r24, 0x40	; 64
+ 1da:	82 b9       	out	0x02, r24	; 2
+ 1dc:	2f e3       	ldi	r18, 0x3F	; 63
+ 1de:	8d e0       	ldi	r24, 0x0D	; 13
+ 1e0:	93 e0       	ldi	r25, 0x03	; 3
+ 1e2:	21 50       	subi	r18, 0x01	; 1
+ 1e4:	80 40       	sbci	r24, 0x00	; 0
+ 1e6:	90 40       	sbci	r25, 0x00	; 0
+ 1e8:	e1 f7       	brne	.-8      	; 0x1e2 <_Z9AdjustWayi+0xd8>
+ 1ea:	00 c0       	rjmp	.+0      	; 0x1ec <_Z9AdjustWayi+0xe2>
+ 1ec:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchL_3);
- 1e6:	82 b1       	in	r24, 0x02	; 2
- 1e8:	8f 7b       	andi	r24, 0xBF	; 191
- 1ea:	82 b9       	out	0x02, r24	; 2
+ 1ee:	82 b1       	in	r24, 0x02	; 2
+ 1f0:	8f 7b       	andi	r24, 0xBF	; 191
+ 1f2:	82 b9       	out	0x02, r24	; 2
 		
 		
 		break;
- 1ec:	08 95       	ret
+ 1f4:	08 95       	ret
 		
 		case 4:
 
 		PORTA |= (1 << RailSwitchR_1);
- 1ee:	82 b1       	in	r24, 0x02	; 2
- 1f0:	88 60       	ori	r24, 0x08	; 8
- 1f2:	82 b9       	out	0x02, r24	; 2
- 1f4:	2f e3       	ldi	r18, 0x3F	; 63
- 1f6:	8d e0       	ldi	r24, 0x0D	; 13
- 1f8:	93 e0       	ldi	r25, 0x03	; 3
- 1fa:	21 50       	subi	r18, 0x01	; 1
- 1fc:	80 40       	sbci	r24, 0x00	; 0
- 1fe:	90 40       	sbci	r25, 0x00	; 0
- 200:	e1 f7       	brne	.-8      	; 0x1fa <_Z9AdjustWayi+0xf0>
- 202:	00 c0       	rjmp	.+0      	; 0x204 <_Z9AdjustWayi+0xfa>
- 204:	00 00       	nop
+ 1f6:	82 b1       	in	r24, 0x02	; 2
+ 1f8:	88 60       	ori	r24, 0x08	; 8
+ 1fa:	82 b9       	out	0x02, r24	; 2
+ 1fc:	2f e3       	ldi	r18, 0x3F	; 63
+ 1fe:	8d e0       	ldi	r24, 0x0D	; 13
+ 200:	93 e0       	ldi	r25, 0x03	; 3
+ 202:	21 50       	subi	r18, 0x01	; 1
+ 204:	80 40       	sbci	r24, 0x00	; 0
+ 206:	90 40       	sbci	r25, 0x00	; 0
+ 208:	e1 f7       	brne	.-8      	; 0x202 <_Z9AdjustWayi+0xf8>
+ 20a:	00 c0       	rjmp	.+0      	; 0x20c <_Z9AdjustWayi+0x102>
+ 20c:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
- 206:	82 b1       	in	r24, 0x02	; 2
- 208:	87 7f       	andi	r24, 0xF7	; 247
- 20a:	82 b9       	out	0x02, r24	; 2
+ 20e:	82 b1       	in	r24, 0x02	; 2
+ 210:	87 7f       	andi	r24, 0xF7	; 247
+ 212:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchR_2);
- 20c:	82 b1       	in	r24, 0x02	; 2
- 20e:	80 62       	ori	r24, 0x20	; 32
- 210:	82 b9       	out	0x02, r24	; 2
- 212:	2f e3       	ldi	r18, 0x3F	; 63
- 214:	8d e0       	ldi	r24, 0x0D	; 13
- 216:	93 e0       	ldi	r25, 0x03	; 3
- 218:	21 50       	subi	r18, 0x01	; 1
- 21a:	80 40       	sbci	r24, 0x00	; 0
- 21c:	90 40       	sbci	r25, 0x00	; 0
- 21e:	e1 f7       	brne	.-8      	; 0x218 <_Z9AdjustWayi+0x10e>
- 220:	00 c0       	rjmp	.+0      	; 0x222 <_Z9AdjustWayi+0x118>
- 222:	00 00       	nop
+ 214:	82 b1       	in	r24, 0x02	; 2
+ 216:	80 62       	ori	r24, 0x20	; 32
+ 218:	82 b9       	out	0x02, r24	; 2
+ 21a:	2f e3       	ldi	r18, 0x3F	; 63
+ 21c:	8d e0       	ldi	r24, 0x0D	; 13
+ 21e:	93 e0       	ldi	r25, 0x03	; 3
+ 220:	21 50       	subi	r18, 0x01	; 1
+ 222:	80 40       	sbci	r24, 0x00	; 0
+ 224:	90 40       	sbci	r25, 0x00	; 0
+ 226:	e1 f7       	brne	.-8      	; 0x220 <_Z9AdjustWayi+0x116>
+ 228:	00 c0       	rjmp	.+0      	; 0x22a <_Z9AdjustWayi+0x120>
+ 22a:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_2);
- 224:	82 b1       	in	r24, 0x02	; 2
- 226:	8f 7d       	andi	r24, 0xDF	; 223
- 228:	82 b9       	out	0x02, r24	; 2
+ 22c:	82 b1       	in	r24, 0x02	; 2
+ 22e:	8f 7d       	andi	r24, 0xDF	; 223
+ 230:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchR_3);
- 22a:	82 b1       	in	r24, 0x02	; 2
- 22c:	80 68       	ori	r24, 0x80	; 128
- 22e:	82 b9       	out	0x02, r24	; 2
- 230:	2f e3       	ldi	r18, 0x3F	; 63
- 232:	8d e0       	ldi	r24, 0x0D	; 13
- 234:	93 e0       	ldi	r25, 0x03	; 3
- 236:	21 50       	subi	r18, 0x01	; 1
- 238:	80 40       	sbci	r24, 0x00	; 0
- 23a:	90 40       	sbci	r25, 0x00	; 0
- 23c:	e1 f7       	brne	.-8      	; 0x236 <_Z9AdjustWayi+0x12c>
- 23e:	00 c0       	rjmp	.+0      	; 0x240 <_Z9AdjustWayi+0x136>
- 240:	00 00       	nop
+ 232:	82 b1       	in	r24, 0x02	; 2
+ 234:	80 68       	ori	r24, 0x80	; 128
+ 236:	82 b9       	out	0x02, r24	; 2
+ 238:	2f e3       	ldi	r18, 0x3F	; 63
+ 23a:	8d e0       	ldi	r24, 0x0D	; 13
+ 23c:	93 e0       	ldi	r25, 0x03	; 3
+ 23e:	21 50       	subi	r18, 0x01	; 1
+ 240:	80 40       	sbci	r24, 0x00	; 0
+ 242:	90 40       	sbci	r25, 0x00	; 0
+ 244:	e1 f7       	brne	.-8      	; 0x23e <_Z9AdjustWayi+0x134>
+ 246:	00 c0       	rjmp	.+0      	; 0x248 <_Z9AdjustWayi+0x13e>
+ 248:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_3);
- 242:	82 b1       	in	r24, 0x02	; 2
- 244:	8f 77       	andi	r24, 0x7F	; 127
- 246:	82 b9       	out	0x02, r24	; 2
+ 24a:	82 b1       	in	r24, 0x02	; 2
+ 24c:	8f 77       	andi	r24, 0x7F	; 127
+ 24e:	82 b9       	out	0x02, r24	; 2
 	
 		PORTC |= (1 << RailSwitchL_4);
- 248:	88 b1       	in	r24, 0x08	; 8
- 24a:	80 62       	ori	r24, 0x20	; 32
- 24c:	88 b9       	out	0x08, r24	; 8
- 24e:	2f e3       	ldi	r18, 0x3F	; 63
- 250:	8d e0       	ldi	r24, 0x0D	; 13
- 252:	93 e0       	ldi	r25, 0x03	; 3
- 254:	21 50       	subi	r18, 0x01	; 1
- 256:	80 40       	sbci	r24, 0x00	; 0
- 258:	90 40       	sbci	r25, 0x00	; 0
- 25a:	e1 f7       	brne	.-8      	; 0x254 <_Z9AdjustWayi+0x14a>
- 25c:	00 c0       	rjmp	.+0      	; 0x25e <_Z9AdjustWayi+0x154>
- 25e:	00 00       	nop
+ 250:	88 b1       	in	r24, 0x08	; 8
+ 252:	80 62       	ori	r24, 0x20	; 32
+ 254:	88 b9       	out	0x08, r24	; 8
+ 256:	2f e3       	ldi	r18, 0x3F	; 63
+ 258:	8d e0       	ldi	r24, 0x0D	; 13
+ 25a:	93 e0       	ldi	r25, 0x03	; 3
+ 25c:	21 50       	subi	r18, 0x01	; 1
+ 25e:	80 40       	sbci	r24, 0x00	; 0
+ 260:	90 40       	sbci	r25, 0x00	; 0
+ 262:	e1 f7       	brne	.-8      	; 0x25c <_Z9AdjustWayi+0x152>
+ 264:	00 c0       	rjmp	.+0      	; 0x266 <_Z9AdjustWayi+0x15c>
+ 266:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchL_4);
- 260:	88 b1       	in	r24, 0x08	; 8
- 262:	8f 7d       	andi	r24, 0xDF	; 223
- 264:	88 b9       	out	0x08, r24	; 8
+ 268:	88 b1       	in	r24, 0x08	; 8
+ 26a:	8f 7d       	andi	r24, 0xDF	; 223
+ 26c:	88 b9       	out	0x08, r24	; 8
 
 		break;
- 266:	08 95       	ret
+ 26e:	08 95       	ret
 		
 		case 5:
 
 		PORTA |= (1 << RailSwitchR_1);
- 268:	82 b1       	in	r24, 0x02	; 2
- 26a:	88 60       	ori	r24, 0x08	; 8
- 26c:	82 b9       	out	0x02, r24	; 2
- 26e:	2f e3       	ldi	r18, 0x3F	; 63
- 270:	8d e0       	ldi	r24, 0x0D	; 13
- 272:	93 e0       	ldi	r25, 0x03	; 3
- 274:	21 50       	subi	r18, 0x01	; 1
- 276:	80 40       	sbci	r24, 0x00	; 0
- 278:	90 40       	sbci	r25, 0x00	; 0
- 27a:	e1 f7       	brne	.-8      	; 0x274 <_Z9AdjustWayi+0x16a>
- 27c:	00 c0       	rjmp	.+0      	; 0x27e <_Z9AdjustWayi+0x174>
- 27e:	00 00       	nop
+ 270:	82 b1       	in	r24, 0x02	; 2
+ 272:	88 60       	ori	r24, 0x08	; 8
+ 274:	82 b9       	out	0x02, r24	; 2
+ 276:	2f e3       	ldi	r18, 0x3F	; 63
+ 278:	8d e0       	ldi	r24, 0x0D	; 13
+ 27a:	93 e0       	ldi	r25, 0x03	; 3
+ 27c:	21 50       	subi	r18, 0x01	; 1
+ 27e:	80 40       	sbci	r24, 0x00	; 0
+ 280:	90 40       	sbci	r25, 0x00	; 0
+ 282:	e1 f7       	brne	.-8      	; 0x27c <_Z9AdjustWayi+0x172>
+ 284:	00 c0       	rjmp	.+0      	; 0x286 <_Z9AdjustWayi+0x17c>
+ 286:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
- 280:	82 b1       	in	r24, 0x02	; 2
- 282:	87 7f       	andi	r24, 0xF7	; 247
- 284:	82 b9       	out	0x02, r24	; 2
+ 288:	82 b1       	in	r24, 0x02	; 2
+ 28a:	87 7f       	andi	r24, 0xF7	; 247
+ 28c:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA | (1 << RailSwitchR_2);
- 286:	82 b1       	in	r24, 0x02	; 2
- 288:	2f e3       	ldi	r18, 0x3F	; 63
- 28a:	8d e0       	ldi	r24, 0x0D	; 13
- 28c:	93 e0       	ldi	r25, 0x03	; 3
- 28e:	21 50       	subi	r18, 0x01	; 1
- 290:	80 40       	sbci	r24, 0x00	; 0
- 292:	90 40       	sbci	r25, 0x00	; 0
- 294:	e1 f7       	brne	.-8      	; 0x28e <_Z9AdjustWayi+0x184>
- 296:	00 c0       	rjmp	.+0      	; 0x298 <_Z9AdjustWayi+0x18e>
- 298:	00 00       	nop
+ 28e:	82 b1       	in	r24, 0x02	; 2
+ 290:	2f e3       	ldi	r18, 0x3F	; 63
+ 292:	8d e0       	ldi	r24, 0x0D	; 13
+ 294:	93 e0       	ldi	r25, 0x03	; 3
+ 296:	21 50       	subi	r18, 0x01	; 1
+ 298:	80 40       	sbci	r24, 0x00	; 0
+ 29a:	90 40       	sbci	r25, 0x00	; 0
+ 29c:	e1 f7       	brne	.-8      	; 0x296 <_Z9AdjustWayi+0x18c>
+ 29e:	00 c0       	rjmp	.+0      	; 0x2a0 <_Z9AdjustWayi+0x196>
+ 2a0:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_2);
- 29a:	82 b1       	in	r24, 0x02	; 2
- 29c:	8f 7d       	andi	r24, 0xDF	; 223
- 29e:	82 b9       	out	0x02, r24	; 2
+ 2a2:	82 b1       	in	r24, 0x02	; 2
+ 2a4:	8f 7d       	andi	r24, 0xDF	; 223
+ 2a6:	82 b9       	out	0x02, r24	; 2
 	
 		PORTA |= (1 << RailSwitchR_3);
- 2a0:	82 b1       	in	r24, 0x02	; 2
- 2a2:	80 68       	ori	r24, 0x80	; 128
- 2a4:	82 b9       	out	0x02, r24	; 2
- 2a6:	2f e3       	ldi	r18, 0x3F	; 63
- 2a8:	8d e0       	ldi	r24, 0x0D	; 13
- 2aa:	93 e0       	ldi	r25, 0x03	; 3
- 2ac:	21 50       	subi	r18, 0x01	; 1
- 2ae:	80 40       	sbci	r24, 0x00	; 0
- 2b0:	90 40       	sbci	r25, 0x00	; 0
- 2b2:	e1 f7       	brne	.-8      	; 0x2ac <_Z9AdjustWayi+0x1a2>
- 2b4:	00 c0       	rjmp	.+0      	; 0x2b6 <_Z9AdjustWayi+0x1ac>
- 2b6:	00 00       	nop
+ 2a8:	82 b1       	in	r24, 0x02	; 2
+ 2aa:	80 68       	ori	r24, 0x80	; 128
+ 2ac:	82 b9       	out	0x02, r24	; 2
+ 2ae:	2f e3       	ldi	r18, 0x3F	; 63
+ 2b0:	8d e0       	ldi	r24, 0x0D	; 13
+ 2b2:	93 e0       	ldi	r25, 0x03	; 3
+ 2b4:	21 50       	subi	r18, 0x01	; 1
+ 2b6:	80 40       	sbci	r24, 0x00	; 0
+ 2b8:	90 40       	sbci	r25, 0x00	; 0
+ 2ba:	e1 f7       	brne	.-8      	; 0x2b4 <_Z9AdjustWayi+0x1aa>
+ 2bc:	00 c0       	rjmp	.+0      	; 0x2be <_Z9AdjustWayi+0x1b4>
+ 2be:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_3);
- 2b8:	82 b1       	in	r24, 0x02	; 2
- 2ba:	8f 77       	andi	r24, 0x7F	; 127
- 2bc:	82 b9       	out	0x02, r24	; 2
+ 2c0:	82 b1       	in	r24, 0x02	; 2
+ 2c2:	8f 77       	andi	r24, 0x7F	; 127
+ 2c4:	82 b9       	out	0x02, r24	; 2
 	
 		PORTC |= (1 << RailSwitchR_4);
- 2be:	88 b1       	in	r24, 0x08	; 8
- 2c0:	80 64       	ori	r24, 0x40	; 64
- 2c2:	88 b9       	out	0x08, r24	; 8
- 2c4:	2f e3       	ldi	r18, 0x3F	; 63
- 2c6:	8d e0       	ldi	r24, 0x0D	; 13
- 2c8:	93 e0       	ldi	r25, 0x03	; 3
- 2ca:	21 50       	subi	r18, 0x01	; 1
- 2cc:	80 40       	sbci	r24, 0x00	; 0
- 2ce:	90 40       	sbci	r25, 0x00	; 0
- 2d0:	e1 f7       	brne	.-8      	; 0x2ca <_Z9AdjustWayi+0x1c0>
- 2d2:	00 c0       	rjmp	.+0      	; 0x2d4 <_Z9AdjustWayi+0x1ca>
- 2d4:	00 00       	nop
+ 2c6:	88 b1       	in	r24, 0x08	; 8
+ 2c8:	80 64       	ori	r24, 0x40	; 64
+ 2ca:	88 b9       	out	0x08, r24	; 8
+ 2cc:	2f e3       	ldi	r18, 0x3F	; 63
+ 2ce:	8d e0       	ldi	r24, 0x0D	; 13
+ 2d0:	93 e0       	ldi	r25, 0x03	; 3
+ 2d2:	21 50       	subi	r18, 0x01	; 1
+ 2d4:	80 40       	sbci	r24, 0x00	; 0
+ 2d6:	90 40       	sbci	r25, 0x00	; 0
+ 2d8:	e1 f7       	brne	.-8      	; 0x2d2 <_Z9AdjustWayi+0x1c8>
+ 2da:	00 c0       	rjmp	.+0      	; 0x2dc <_Z9AdjustWayi+0x1d2>
+ 2dc:	00 00       	nop
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchR_4);
- 2d6:	88 b1       	in	r24, 0x08	; 8
- 2d8:	8f 7b       	andi	r24, 0xBF	; 191
- 2da:	88 b9       	out	0x08, r24	; 8
- 2dc:	08 95       	ret
+ 2de:	88 b1       	in	r24, 0x08	; 8
+ 2e0:	8f 7b       	andi	r24, 0xBF	; 191
+ 2e2:	88 b9       	out	0x08, r24	; 8
+ 2e4:	08 95       	ret
 
-000002de <_Z15TurnOnButtonLEDi>:
-
+000002e6 <_Z15TurnOnButtonLEDi>:
+}
 
 void TurnOnButtonLED(int ChosenTable)
 {
 	// Выключаем все светодиоды
 	PORTK &= ~((1 << TableLED_1) | (1 << TableLED_2) | (1 << TableLED_3) | (1 << TableLED_4) | (1 << TableLED_5)); // | (1 << TableLED_6));
- 2de:	e8 e0       	ldi	r30, 0x08	; 8
- 2e0:	f1 e0       	ldi	r31, 0x01	; 1
- 2e2:	20 81       	ld	r18, Z
- 2e4:	20 7e       	andi	r18, 0xE0	; 224
- 2e6:	20 83       	st	Z, r18
+ 2e6:	e8 e0       	ldi	r30, 0x08	; 8
+ 2e8:	f1 e0       	ldi	r31, 0x01	; 1
+ 2ea:	20 81       	ld	r18, Z
+ 2ec:	20 7e       	andi	r18, 0xE0	; 224
+ 2ee:	20 83       	st	Z, r18
 	// Включаем выбранный светодиод
 	PORTK |= (1 << (ChosenTable - 1));
- 2e8:	40 81       	ld	r20, Z
- 2ea:	01 97       	sbiw	r24, 0x01	; 1
- 2ec:	21 e0       	ldi	r18, 0x01	; 1
- 2ee:	30 e0       	ldi	r19, 0x00	; 0
- 2f0:	b9 01       	movw	r22, r18
- 2f2:	02 c0       	rjmp	.+4      	; 0x2f8 <_Z15TurnOnButtonLEDi+0x1a>
- 2f4:	66 0f       	add	r22, r22
- 2f6:	77 1f       	adc	r23, r23
- 2f8:	8a 95       	dec	r24
- 2fa:	e2 f7       	brpl	.-8      	; 0x2f4 <_Z15TurnOnButtonLEDi+0x16>
- 2fc:	cb 01       	movw	r24, r22
- 2fe:	84 2b       	or	r24, r20
- 300:	80 83       	st	Z, r24
- 302:	08 95       	ret
+ 2f0:	40 81       	ld	r20, Z
+ 2f2:	01 97       	sbiw	r24, 0x01	; 1
+ 2f4:	21 e0       	ldi	r18, 0x01	; 1
+ 2f6:	30 e0       	ldi	r19, 0x00	; 0
+ 2f8:	b9 01       	movw	r22, r18
+ 2fa:	02 c0       	rjmp	.+4      	; 0x300 <_Z15TurnOnButtonLEDi+0x1a>
+ 2fc:	66 0f       	add	r22, r22
+ 2fe:	77 1f       	adc	r23, r23
+ 300:	8a 95       	dec	r24
+ 302:	e2 f7       	brpl	.-8      	; 0x2fc <_Z15TurnOnButtonLEDi+0x16>
+ 304:	cb 01       	movw	r24, r22
+ 306:	84 2b       	or	r24, r20
+ 308:	80 83       	st	Z, r24
+ 30a:	08 95       	ret
 
-00000304 <_Z9StopTrainv>:
+0000030c <_Z9StopTrainv>:
 }
-
 
 void StopTrain()
 {
+	IsTrainMoving = false;
+ 30c:	10 92 03 02 	sts	0x0203, r1	; 0x800203 <IsTrainMoving>
 	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
- 304:	8b b1       	in	r24, 0x0b	; 11
- 306:	80 7f       	andi	r24, 0xF0	; 240
- 308:	8b b9       	out	0x0b, r24	; 11
+ 310:	8b b1       	in	r24, 0x0b	; 11
+ 312:	80 7f       	andi	r24, 0xF0	; 240
+ 314:	8b b9       	out	0x0b, r24	; 11
 	PORTA &=~ (1 << ReversPin);
- 30a:	82 b1       	in	r24, 0x02	; 2
- 30c:	8d 7f       	andi	r24, 0xFD	; 253
- 30e:	82 b9       	out	0x02, r24	; 2
- 310:	08 95       	ret
+ 316:	82 b1       	in	r24, 0x02	; 2
+ 318:	8d 7f       	andi	r24, 0xFD	; 253
+ 31a:	82 b9       	out	0x02, r24	; 2
+ 31c:	08 95       	ret
 
-00000312 <_Z13MakeTrainMovev>:
-
+0000031e <_Z13MakeTrainMovev>:
+}
 
 void MakeTrainMove() 
 {	
 	int stepDelay = 1000; 
 	PORTD |= (1 << Gear_1_Pin);
- 312:	8b b1       	in	r24, 0x0b	; 11
- 314:	88 60       	ori	r24, 0x08	; 8
- 316:	8b b9       	out	0x0b, r24	; 11
- 318:	2f e3       	ldi	r18, 0x3F	; 63
- 31a:	8d e0       	ldi	r24, 0x0D	; 13
- 31c:	93 e0       	ldi	r25, 0x03	; 3
- 31e:	21 50       	subi	r18, 0x01	; 1
- 320:	80 40       	sbci	r24, 0x00	; 0
- 322:	90 40       	sbci	r25, 0x00	; 0
- 324:	e1 f7       	brne	.-8      	; 0x31e <_Z13MakeTrainMovev+0xc>
- 326:	00 c0       	rjmp	.+0      	; 0x328 <_Z13MakeTrainMovev+0x16>
- 328:	00 00       	nop
+ 31e:	8b b1       	in	r24, 0x0b	; 11
+ 320:	88 60       	ori	r24, 0x08	; 8
+ 322:	8b b9       	out	0x0b, r24	; 11
+ 324:	2f e3       	ldi	r18, 0x3F	; 63
+ 326:	8d e0       	ldi	r24, 0x0D	; 13
+ 328:	93 e0       	ldi	r25, 0x03	; 3
+ 32a:	21 50       	subi	r18, 0x01	; 1
+ 32c:	80 40       	sbci	r24, 0x00	; 0
+ 32e:	90 40       	sbci	r25, 0x00	; 0
+ 330:	e1 f7       	brne	.-8      	; 0x32a <_Z13MakeTrainMovev+0xc>
+ 332:	00 c0       	rjmp	.+0      	; 0x334 <_Z13MakeTrainMovev+0x16>
+ 334:	00 00       	nop
 	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_2_Pin);
- 32a:	8b b1       	in	r24, 0x0b	; 11
- 32c:	84 60       	ori	r24, 0x04	; 4
- 32e:	8b b9       	out	0x0b, r24	; 11
- 330:	2f e3       	ldi	r18, 0x3F	; 63
- 332:	8d e0       	ldi	r24, 0x0D	; 13
- 334:	93 e0       	ldi	r25, 0x03	; 3
- 336:	21 50       	subi	r18, 0x01	; 1
- 338:	80 40       	sbci	r24, 0x00	; 0
- 33a:	90 40       	sbci	r25, 0x00	; 0
- 33c:	e1 f7       	brne	.-8      	; 0x336 <_Z13MakeTrainMovev+0x24>
- 33e:	00 c0       	rjmp	.+0      	; 0x340 <_Z13MakeTrainMovev+0x2e>
- 340:	00 00       	nop
+ 336:	8b b1       	in	r24, 0x0b	; 11
+ 338:	84 60       	ori	r24, 0x04	; 4
+ 33a:	8b b9       	out	0x0b, r24	; 11
+ 33c:	2f e3       	ldi	r18, 0x3F	; 63
+ 33e:	8d e0       	ldi	r24, 0x0D	; 13
+ 340:	93 e0       	ldi	r25, 0x03	; 3
+ 342:	21 50       	subi	r18, 0x01	; 1
+ 344:	80 40       	sbci	r24, 0x00	; 0
+ 346:	90 40       	sbci	r25, 0x00	; 0
+ 348:	e1 f7       	brne	.-8      	; 0x342 <_Z13MakeTrainMovev+0x24>
+ 34a:	00 c0       	rjmp	.+0      	; 0x34c <_Z13MakeTrainMovev+0x2e>
+ 34c:	00 00       	nop
 	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_3_Pin);
- 342:	8b b1       	in	r24, 0x0b	; 11
- 344:	82 60       	ori	r24, 0x02	; 2
- 346:	8b b9       	out	0x0b, r24	; 11
- 348:	2f e3       	ldi	r18, 0x3F	; 63
- 34a:	8d e0       	ldi	r24, 0x0D	; 13
- 34c:	93 e0       	ldi	r25, 0x03	; 3
- 34e:	21 50       	subi	r18, 0x01	; 1
- 350:	80 40       	sbci	r24, 0x00	; 0
- 352:	90 40       	sbci	r25, 0x00	; 0
- 354:	e1 f7       	brne	.-8      	; 0x34e <_Z13MakeTrainMovev+0x3c>
- 356:	00 c0       	rjmp	.+0      	; 0x358 <_Z13MakeTrainMovev+0x46>
- 358:	00 00       	nop
+ 34e:	8b b1       	in	r24, 0x0b	; 11
+ 350:	82 60       	ori	r24, 0x02	; 2
+ 352:	8b b9       	out	0x0b, r24	; 11
+ 354:	2f e3       	ldi	r18, 0x3F	; 63
+ 356:	8d e0       	ldi	r24, 0x0D	; 13
+ 358:	93 e0       	ldi	r25, 0x03	; 3
+ 35a:	21 50       	subi	r18, 0x01	; 1
+ 35c:	80 40       	sbci	r24, 0x00	; 0
+ 35e:	90 40       	sbci	r25, 0x00	; 0
+ 360:	e1 f7       	brne	.-8      	; 0x35a <_Z13MakeTrainMovev+0x3c>
+ 362:	00 c0       	rjmp	.+0      	; 0x364 <_Z13MakeTrainMovev+0x46>
+ 364:	00 00       	nop
 	_delay_ms(stepDelay);
 	PORTD |= (1 << Gear_4_Pin);	
- 35a:	8b b1       	in	r24, 0x0b	; 11
- 35c:	81 60       	ori	r24, 0x01	; 1
- 35e:	8b b9       	out	0x0b, r24	; 11
- 360:	08 95       	ret
+ 366:	8b b1       	in	r24, 0x0b	; 11
+ 368:	81 60       	ori	r24, 0x01	; 1
+ 36a:	8b b9       	out	0x0b, r24	; 11
+	
+	IsTrainMoving = true;
+ 36c:	81 e0       	ldi	r24, 0x01	; 1
+ 36e:	80 93 03 02 	sts	0x0203, r24	; 0x800203 <IsTrainMoving>
+ 372:	08 95       	ret
 
-00000362 <_Z9MoveTrainb>:
+00000374 <_Z9MoveTrainb>:
 }
 
 void MoveTrain(bool direction)
 {	
- 362:	cf 93       	push	r28
- 364:	c8 2f       	mov	r28, r24
+ 374:	cf 93       	push	r28
+ 376:	c8 2f       	mov	r28, r24
 
-	if (direction == 1 && PINA & (1 << ReversPin) )
- 366:	88 23       	and	r24, r24
- 368:	21 f0       	breq	.+8      	; 0x372 <_Z9MoveTrainb+0x10>
- 36a:	01 99       	sbic	0x00, 1	; 0
- 36c:	04 c0       	rjmp	.+8      	; 0x376 <_Z9MoveTrainb+0x14>
- 36e:	80 e0       	ldi	r24, 0x00	; 0
- 370:	03 c0       	rjmp	.+6      	; 0x378 <_Z9MoveTrainb+0x16>
- 372:	80 e0       	ldi	r24, 0x00	; 0
- 374:	01 c0       	rjmp	.+2      	; 0x378 <_Z9MoveTrainb+0x16>
- 376:	81 e0       	ldi	r24, 0x01	; 1
+	if (direction == 1 && PINA & (1 << ReversPin))
  378:	88 23       	and	r24, r24
- 37a:	21 f0       	breq	.+8      	; 0x384 <_Z9MoveTrainb+0x22>
+ 37a:	21 f0       	breq	.+8      	; 0x384 <_Z9MoveTrainb+0x10>
+ 37c:	01 99       	sbic	0x00, 1	; 0
+ 37e:	04 c0       	rjmp	.+8      	; 0x388 <_Z9MoveTrainb+0x14>
+ 380:	80 e0       	ldi	r24, 0x00	; 0
+ 382:	03 c0       	rjmp	.+6      	; 0x38a <_Z9MoveTrainb+0x16>
+ 384:	80 e0       	ldi	r24, 0x00	; 0
+ 386:	01 c0       	rjmp	.+2      	; 0x38a <_Z9MoveTrainb+0x16>
+ 388:	81 e0       	ldi	r24, 0x01	; 1
+ 38a:	88 23       	and	r24, r24
+ 38c:	21 f0       	breq	.+8      	; 0x396 <_Z9MoveTrainb+0x22>
 	{
 		StopTrain();
- 37c:	c3 df       	rcall	.-122    	; 0x304 <_Z9StopTrainv>
+ 38e:	be df       	rcall	.-132    	; 0x30c <_Z9StopTrainv>
 		PORTA &=~ (1 << ReversPin);
- 37e:	82 b1       	in	r24, 0x02	; 2
- 380:	8d 7f       	andi	r24, 0xFD	; 253
- 382:	82 b9       	out	0x02, r24	; 2
+ 390:	82 b1       	in	r24, 0x02	; 2
+ 392:	8d 7f       	andi	r24, 0xFD	; 253
+ 394:	82 b9       	out	0x02, r24	; 2
+	}
 
-	}
-	
 	if (direction == 0 && !(PINA & (1 << ReversPin)))
- 384:	c1 11       	cpse	r28, r1
- 386:	04 c0       	rjmp	.+8      	; 0x390 <_Z9MoveTrainb+0x2e>
- 388:	01 9b       	sbis	0x00, 1	; 0
- 38a:	04 c0       	rjmp	.+8      	; 0x394 <_Z9MoveTrainb+0x32>
- 38c:	80 e0       	ldi	r24, 0x00	; 0
- 38e:	03 c0       	rjmp	.+6      	; 0x396 <_Z9MoveTrainb+0x34>
- 390:	80 e0       	ldi	r24, 0x00	; 0
- 392:	01 c0       	rjmp	.+2      	; 0x396 <_Z9MoveTrainb+0x34>
- 394:	81 e0       	ldi	r24, 0x01	; 1
- 396:	88 23       	and	r24, r24
-	{	
-		StopTrain();	
- 398:	21 f0       	breq	.+8      	; 0x3a2 <_Z9MoveTrainb+0x40>
- 39a:	b4 df       	rcall	.-152    	; 0x304 <_Z9StopTrainv>
-		PORTA |= (1<< ReversPin);
- 39c:	82 b1       	in	r24, 0x02	; 2
- 39e:	82 60       	ori	r24, 0x02	; 2
+ 396:	c1 11       	cpse	r28, r1
+ 398:	04 c0       	rjmp	.+8      	; 0x3a2 <_Z9MoveTrainb+0x2e>
+ 39a:	01 9b       	sbis	0x00, 1	; 0
+ 39c:	04 c0       	rjmp	.+8      	; 0x3a6 <_Z9MoveTrainb+0x32>
+ 39e:	80 e0       	ldi	r24, 0x00	; 0
+ 3a0:	03 c0       	rjmp	.+6      	; 0x3a8 <_Z9MoveTrainb+0x34>
+ 3a2:	80 e0       	ldi	r24, 0x00	; 0
+ 3a4:	01 c0       	rjmp	.+2      	; 0x3a8 <_Z9MoveTrainb+0x34>
+ 3a6:	81 e0       	ldi	r24, 0x01	; 1
+ 3a8:	88 23       	and	r24, r24
+	{
+		StopTrain();
+ 3aa:	21 f0       	breq	.+8      	; 0x3b4 <_Z9MoveTrainb+0x40>
+ 3ac:	af df       	rcall	.-162    	; 0x30c <_Z9StopTrainv>
+		PORTA |= (1 << ReversPin);
+ 3ae:	82 b1       	in	r24, 0x02	; 2
+ 3b0:	82 60       	ori	r24, 0x02	; 2
 	}
+
 
 	MakeTrainMove();
- 3a0:	82 b9       	out	0x02, r24	; 2
- 3a2:	b7 df       	rcall	.-146    	; 0x312 <_Z13MakeTrainMovev>
+ 3b2:	82 b9       	out	0x02, r24	; 2
+ 3b4:	b4 df       	rcall	.-152    	; 0x31e <_Z13MakeTrainMovev>
 }
- 3a4:	cf 91       	pop	r28
- 3a6:	08 95       	ret
+ 3b6:	cf 91       	pop	r28
+ 3b8:	08 95       	ret
 
-000003a8 <_Z10SetLEDMovebb>:
+000003ba <_Z10SetLEDMovebb>:
 
 void SetLEDMove (bool forwardLED, bool backwardLED)
 {
 	PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
- 3a8:	e8 e0       	ldi	r30, 0x08	; 8
- 3aa:	f1 e0       	ldi	r31, 0x01	; 1
- 3ac:	90 81       	ld	r25, Z
- 3ae:	9f 73       	andi	r25, 0x3F	; 63
- 3b0:	90 83       	st	Z, r25
+ 3ba:	e8 e0       	ldi	r30, 0x08	; 8
+ 3bc:	f1 e0       	ldi	r31, 0x01	; 1
+ 3be:	90 81       	ld	r25, Z
+ 3c0:	9f 73       	andi	r25, 0x3F	; 63
+ 3c2:	90 83       	st	Z, r25
 	
 	if (forwardLED == 1)
- 3b2:	88 23       	and	r24, r24
- 3b4:	19 f0       	breq	.+6      	; 0x3bc <_Z10SetLEDMovebb+0x14>
+ 3c4:	88 23       	and	r24, r24
+ 3c6:	19 f0       	breq	.+6      	; 0x3ce <_Z10SetLEDMovebb+0x14>
 	{
 		PORTK|= (1 << MoveForwarLED);
- 3b6:	80 81       	ld	r24, Z
- 3b8:	80 64       	ori	r24, 0x40	; 64
- 3ba:	80 83       	st	Z, r24
+ 3c8:	80 81       	ld	r24, Z
+ 3ca:	80 64       	ori	r24, 0x40	; 64
+ 3cc:	80 83       	st	Z, r24
 	}
 	if (backwardLED == 1)
- 3bc:	66 23       	and	r22, r22
- 3be:	29 f0       	breq	.+10     	; 0x3ca <_Z10SetLEDMovebb+0x22>
+ 3ce:	66 23       	and	r22, r22
+ 3d0:	29 f0       	breq	.+10     	; 0x3dc <_Z10SetLEDMovebb+0x22>
 	{
 		PORTK|= (1 << MoveBackwardLED);		
- 3c0:	e8 e0       	ldi	r30, 0x08	; 8
- 3c2:	f1 e0       	ldi	r31, 0x01	; 1
- 3c4:	80 81       	ld	r24, Z
- 3c6:	80 68       	ori	r24, 0x80	; 128
- 3c8:	80 83       	st	Z, r24
- 3ca:	08 95       	ret
+ 3d2:	e8 e0       	ldi	r30, 0x08	; 8
+ 3d4:	f1 e0       	ldi	r31, 0x01	; 1
+ 3d6:	80 81       	ld	r24, Z
+ 3d8:	80 68       	ori	r24, 0x80	; 128
+ 3da:	80 83       	st	Z, r24
+ 3dc:	08 95       	ret
 
-000003cc <main>:
+000003de <_Z8SlowModev>:
+}
+
+void SlowMode () 
+{
+	int stepDelay = 50; 
+	PORTD &= ~ (1 << Gear_1_Pin);
+ 3de:	8b b1       	in	r24, 0x0b	; 11
+ 3e0:	87 7f       	andi	r24, 0xF7	; 247
+ 3e2:	8b b9       	out	0x0b, r24	; 11
+ 3e4:	83 ed       	ldi	r24, 0xD3	; 211
+ 3e6:	90 e3       	ldi	r25, 0x30	; 48
+ 3e8:	01 97       	sbiw	r24, 0x01	; 1
+ 3ea:	f1 f7       	brne	.-4      	; 0x3e8 <_Z8SlowModev+0xa>
+ 3ec:	00 c0       	rjmp	.+0      	; 0x3ee <_Z8SlowModev+0x10>
+ 3ee:	00 00       	nop
+	_delay_ms(stepDelay);
+	PORTD &= ~ (1 << Gear_2_Pin);
+ 3f0:	8b b1       	in	r24, 0x0b	; 11
+ 3f2:	8b 7f       	andi	r24, 0xFB	; 251
+ 3f4:	8b b9       	out	0x0b, r24	; 11
+ 3f6:	83 ed       	ldi	r24, 0xD3	; 211
+ 3f8:	90 e3       	ldi	r25, 0x30	; 48
+ 3fa:	01 97       	sbiw	r24, 0x01	; 1
+ 3fc:	f1 f7       	brne	.-4      	; 0x3fa <_Z8SlowModev+0x1c>
+ 3fe:	00 c0       	rjmp	.+0      	; 0x400 <__LOCK_REGION_LENGTH__>
+ 400:	00 00       	nop
+	_delay_ms(stepDelay);
+	PORTD |= (1 << Gear_3_Pin);
+ 402:	8b b1       	in	r24, 0x0b	; 11
+ 404:	82 60       	ori	r24, 0x02	; 2
+ 406:	8b b9       	out	0x0b, r24	; 11
+ 408:	83 ed       	ldi	r24, 0xD3	; 211
+ 40a:	90 e3       	ldi	r25, 0x30	; 48
+ 40c:	01 97       	sbiw	r24, 0x01	; 1
+ 40e:	f1 f7       	brne	.-4      	; 0x40c <__LOCK_REGION_LENGTH__+0xc>
+ 410:	00 c0       	rjmp	.+0      	; 0x412 <__LOCK_REGION_LENGTH__+0x12>
+ 412:	00 00       	nop
+	_delay_ms(stepDelay);
+	PORTD |= (1 << Gear_4_Pin);	
+ 414:	8b b1       	in	r24, 0x0b	; 11
+ 416:	81 60       	ori	r24, 0x01	; 1
+ 418:	8b b9       	out	0x0b, r24	; 11
+ 41a:	08 95       	ret
+
+0000041c <main>:
+}
 	
-
 int main(void)
 {
 	// PF Настройка портов кнопок переключения столов как вход
 	DDRF = 0x00; // Установка всех битов порта PF в 0 (входы)
- 3cc:	10 ba       	out	0x10, r1	; 16
+ 41c:	10 ba       	out	0x10, r1	; 16
 	//Установка PB в качестве входов кнопок
 	DDRB &= ~(1 << StopButton); // | (1 << MoveTrainButton));
- 3ce:	84 b1       	in	r24, 0x04	; 4
- 3d0:	8f 7d       	andi	r24, 0xDF	; 223
- 3d2:	84 b9       	out	0x04, r24	; 4
+ 41e:	84 b1       	in	r24, 0x04	; 4
+ 420:	8f 7d       	andi	r24, 0xDF	; 223
+ 422:	84 b9       	out	0x04, r24	; 4
 
 	// Настройка портов PK как выходов кнопка подсветки выбранного стола
 	DDRK = 0xFF; // Установка всех битов порта PK в 1 (выходы)
- 3d4:	8f ef       	ldi	r24, 0xFF	; 255
- 3d6:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <__TEXT_REGION_LENGTH__+0x7c0107>
+ 424:	8f ef       	ldi	r24, 0xFF	; 255
+ 426:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <__TEXT_REGION_LENGTH__+0x7c0107>
 	PORTK = 0x00; // Начальное состояние выходов порта PK (выключено)
- 3da:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <__TEXT_REGION_LENGTH__+0x7c0108>
+ 42a:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <__TEXT_REGION_LENGTH__+0x7c0108>
 
 	// Настройка портов Стрелок как выходов
 	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
- 3de:	81 b1       	in	r24, 0x01	; 1
- 3e0:	8e 6f       	ori	r24, 0xFE	; 254
- 3e2:	81 b9       	out	0x01, r24	; 1
-	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4); // | (1 << RailSwitchL_5) | (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
- 3e4:	87 b1       	in	r24, 0x07	; 7
- 3e6:	80 66       	ori	r24, 0x60	; 96
- 3e8:	87 b9       	out	0x07, r24	; 7
+ 42e:	81 b1       	in	r24, 0x01	; 1
+ 430:	8e 6f       	ori	r24, 0xFE	; 254
+ 432:	81 b9       	out	0x01, r24	; 1
+	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4); // | (1 << EndWaySensor); //| (1 << RailSwitchR_5); // | (1 << RailSwitchL_6) | (1 << RailSwitchR_6);
+ 434:	87 b1       	in	r24, 0x07	; 7
+ 436:	80 66       	ori	r24, 0x60	; 96
+ 438:	87 b9       	out	0x07, r24	; 7
 	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin);
- 3ea:	8a b1       	in	r24, 0x0a	; 10
- 3ec:	8f 60       	ori	r24, 0x0F	; 15
- 3ee:	8a b9       	out	0x0a, r24	; 10
-	//DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
+ 43a:	8a b1       	in	r24, 0x0a	; 10
+ 43c:	8f 60       	ori	r24, 0x0F	; 15
+ 43e:	8a b9       	out	0x0a, r24	; 10
+	
+	// Насстройка порта выключателя концевого выключателя
+	DDRC &= ~(1 << EndWaySensor);
+ 440:	87 b1       	in	r24, 0x07	; 7
+ 442:	8b 7f       	andi	r24, 0xFB	; 251
+ 444:	87 b9       	out	0x07, r24	; 7
+	
+	// Настраиваем порты датчика перехода на тихий ход
+	
+	DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
+ 446:	ea e0       	ldi	r30, 0x0A	; 10
+ 448:	f1 e0       	ldi	r31, 0x01	; 1
+ 44a:	80 81       	ld	r24, Z
+ 44c:	80 7e       	andi	r24, 0xE0	; 224
+ 44e:	80 83       	st	Z, r24
 
 
 	while (1)
 	{
+		
 		if (IsTrainMoving == false)
- 3f0:	80 91 01 02 	lds	r24, 0x0201	; 0x800201 <IsTrainMoving>
- 3f4:	81 11       	cpse	r24, r1
- 3f6:	28 c0       	rjmp	.+80     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
+ 450:	80 91 03 02 	lds	r24, 0x0203	; 0x800203 <IsTrainMoving>
+ 454:	81 11       	cpse	r24, r1
+ 456:	28 c0       	rjmp	.+80     	; 0x4a8 <main+0x8c>
 		{
 			// Проверяем нажатие кнопок и выполняем соответствующие действия
 			if (!(PINF & (1 << TableButton_1)))
- 3f8:	78 99       	sbic	0x0f, 0	; 15
- 3fa:	06 c0       	rjmp	.+12     	; 0x408 <__LOCK_REGION_LENGTH__+0x8>
+ 458:	78 99       	sbic	0x0f, 0	; 15
+ 45a:	06 c0       	rjmp	.+12     	; 0x468 <main+0x4c>
 			{
 				TurnOnButtonLED(1); // Включение светодиода для стола
- 3fc:	81 e0       	ldi	r24, 0x01	; 1
- 3fe:	90 e0       	ldi	r25, 0x00	; 0
- 400:	6e df       	rcall	.-292    	; 0x2de <_Z15TurnOnButtonLEDi>
+ 45c:	81 e0       	ldi	r24, 0x01	; 1
+ 45e:	90 e0       	ldi	r25, 0x00	; 0
+ 460:	42 df       	rcall	.-380    	; 0x2e6 <_Z15TurnOnButtonLEDi>
 				AdjustWay(1);       // Передача указателя на порт для стола 1
- 402:	81 e0       	ldi	r24, 0x01	; 1
- 404:	90 e0       	ldi	r25, 0x00	; 0
- 406:	81 de       	rcall	.-766    	; 0x10a <_Z9AdjustWayi>
+ 462:	81 e0       	ldi	r24, 0x01	; 1
+ 464:	90 e0       	ldi	r25, 0x00	; 0
+ 466:	51 de       	rcall	.-862    	; 0x10a <_Z9AdjustWayi>
 			}
 
 			if (!(PINF & (1 << TableButton_2)))
- 408:	79 99       	sbic	0x0f, 1	; 15
- 40a:	06 c0       	rjmp	.+12     	; 0x418 <__LOCK_REGION_LENGTH__+0x18>
+ 468:	79 99       	sbic	0x0f, 1	; 15
+ 46a:	06 c0       	rjmp	.+12     	; 0x478 <main+0x5c>
 			{
 				TurnOnButtonLED(2); // Включение светодиода для стола
- 40c:	82 e0       	ldi	r24, 0x02	; 2
- 40e:	90 e0       	ldi	r25, 0x00	; 0
- 410:	66 df       	rcall	.-308    	; 0x2de <_Z15TurnOnButtonLEDi>
+ 46c:	82 e0       	ldi	r24, 0x02	; 2
+ 46e:	90 e0       	ldi	r25, 0x00	; 0
+ 470:	3a df       	rcall	.-396    	; 0x2e6 <_Z15TurnOnButtonLEDi>
 				AdjustWay(2);       // Передача указателя на порт для стола 1
- 412:	82 e0       	ldi	r24, 0x02	; 2
- 414:	90 e0       	ldi	r25, 0x00	; 0
- 416:	79 de       	rcall	.-782    	; 0x10a <_Z9AdjustWayi>
- 418:	7a 99       	sbic	0x0f, 2	; 15
+ 472:	82 e0       	ldi	r24, 0x02	; 2
+ 474:	90 e0       	ldi	r25, 0x00	; 0
+ 476:	49 de       	rcall	.-878    	; 0x10a <_Z9AdjustWayi>
+ 478:	7a 99       	sbic	0x0f, 2	; 15
 			}
 
 			if (!(PINF & (1 << TableButton_3)))
- 41a:	06 c0       	rjmp	.+12     	; 0x428 <__LOCK_REGION_LENGTH__+0x28>
+ 47a:	06 c0       	rjmp	.+12     	; 0x488 <main+0x6c>
 			{
 				TurnOnButtonLED(3); // Включение светодиода для столатакое
- 41c:	83 e0       	ldi	r24, 0x03	; 3
- 41e:	90 e0       	ldi	r25, 0x00	; 0
- 420:	5e df       	rcall	.-324    	; 0x2de <_Z15TurnOnButtonLEDi>
+ 47c:	83 e0       	ldi	r24, 0x03	; 3
+ 47e:	90 e0       	ldi	r25, 0x00	; 0
+ 480:	32 df       	rcall	.-412    	; 0x2e6 <_Z15TurnOnButtonLEDi>
 				AdjustWay(3);       // Передача указателя на порт для стола 1
- 422:	83 e0       	ldi	r24, 0x03	; 3
- 424:	90 e0       	ldi	r25, 0x00	; 0
- 426:	71 de       	rcall	.-798    	; 0x10a <_Z9AdjustWayi>
+ 482:	83 e0       	ldi	r24, 0x03	; 3
+ 484:	90 e0       	ldi	r25, 0x00	; 0
+ 486:	41 de       	rcall	.-894    	; 0x10a <_Z9AdjustWayi>
 			}
 
 			if (!(PINF & (1 << TableButton_4)))
- 428:	7b 99       	sbic	0x0f, 3	; 15
+ 488:	7b 99       	sbic	0x0f, 3	; 15
 			{
 				TurnOnButtonLED(4); // Включение светодиода для стола
- 42a:	06 c0       	rjmp	.+12     	; 0x438 <__LOCK_REGION_LENGTH__+0x38>
- 42c:	84 e0       	ldi	r24, 0x04	; 4
- 42e:	90 e0       	ldi	r25, 0x00	; 0
- 430:	56 df       	rcall	.-340    	; 0x2de <_Z15TurnOnButtonLEDi>
+ 48a:	06 c0       	rjmp	.+12     	; 0x498 <main+0x7c>
+ 48c:	84 e0       	ldi	r24, 0x04	; 4
+ 48e:	90 e0       	ldi	r25, 0x00	; 0
+ 490:	2a df       	rcall	.-428    	; 0x2e6 <_Z15TurnOnButtonLEDi>
 				AdjustWay(4);       // Передача указателя на порт для стола 1
- 432:	84 e0       	ldi	r24, 0x04	; 4
- 434:	90 e0       	ldi	r25, 0x00	; 0
- 436:	69 de       	rcall	.-814    	; 0x10a <_Z9AdjustWayi>
+ 492:	84 e0       	ldi	r24, 0x04	; 4
+ 494:	90 e0       	ldi	r25, 0x00	; 0
+ 496:	39 de       	rcall	.-910    	; 0x10a <_Z9AdjustWayi>
 			}
 
 			if (!(PINF & (1 << TableButton_5)))
- 438:	7c 99       	sbic	0x0f, 4	; 15
- 43a:	06 c0       	rjmp	.+12     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
+ 498:	7c 99       	sbic	0x0f, 4	; 15
+ 49a:	06 c0       	rjmp	.+12     	; 0x4a8 <main+0x8c>
 			{
 				TurnOnButtonLED(5); // Включение светодиода для стола
- 43c:	85 e0       	ldi	r24, 0x05	; 5
- 43e:	90 e0       	ldi	r25, 0x00	; 0
- 440:	4e df       	rcall	.-356    	; 0x2de <_Z15TurnOnButtonLEDi>
- 442:	85 e0       	ldi	r24, 0x05	; 5
+ 49c:	85 e0       	ldi	r24, 0x05	; 5
+ 49e:	90 e0       	ldi	r25, 0x00	; 0
+ 4a0:	22 df       	rcall	.-444    	; 0x2e6 <_Z15TurnOnButtonLEDi>
+ 4a2:	85 e0       	ldi	r24, 0x05	; 5
 				AdjustWay(5);       // Передача указателя на порт для стола 1
- 444:	90 e0       	ldi	r25, 0x00	; 0
- 446:	61 de       	rcall	.-830    	; 0x10a <_Z9AdjustWayi>
- 448:	7e 99       	sbic	0x0f, 6	; 15
- 44a:	03 c0       	rjmp	.+6      	; 0x452 <__LOCK_REGION_LENGTH__+0x52>
+ 4a4:	90 e0       	ldi	r25, 0x00	; 0
+ 4a6:	31 de       	rcall	.-926    	; 0x10a <_Z9AdjustWayi>
+ 4a8:	7e 99       	sbic	0x0f, 6	; 15
+ 4aa:	03 c0       	rjmp	.+6      	; 0x4b2 <main+0x96>
 			}	
 		}
 
 		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
- 44c:	80 91 00 02 	lds	r24, 0x0200	; 0x800200 <__DATA_REGION_ORIGIN__>
- 450:	01 c0       	rjmp	.+2      	; 0x454 <__LOCK_REGION_LENGTH__+0x54>
- 452:	80 e0       	ldi	r24, 0x00	; 0
- 454:	88 23       	and	r24, r24
- 456:	29 f0       	breq	.+10     	; 0x462 <__LOCK_REGION_LENGTH__+0x62>
+ 4ac:	80 91 02 02 	lds	r24, 0x0202	; 0x800202 <IsTableChosen>
+ 4b0:	01 c0       	rjmp	.+2      	; 0x4b4 <main+0x98>
+ 4b2:	80 e0       	ldi	r24, 0x00	; 0
+ 4b4:	88 23       	and	r24, r24
+ 4b6:	29 f0       	breq	.+10     	; 0x4c2 <main+0xa6>
 		{
-
-				SetLEDMove(1,0);
- 458:	60 e0       	ldi	r22, 0x00	; 0
- 45a:	81 e0       	ldi	r24, 0x01	; 1
- 45c:	a5 df       	rcall	.-182    	; 0x3a8 <_Z10SetLEDMovebb>
- 45e:	81 e0       	ldi	r24, 0x01	; 1
-				MoveTrain(1);
- 460:	80 df       	rcall	.-256    	; 0x362 <_Z9MoveTrainb>
- 462:	7f 99       	sbic	0x0f, 7	; 15
-				
+			SetLEDMove(1,0);
+ 4b8:	60 e0       	ldi	r22, 0x00	; 0
+ 4ba:	81 e0       	ldi	r24, 0x01	; 1
+ 4bc:	7e df       	rcall	.-260    	; 0x3ba <_Z10SetLEDMovebb>
+ 4be:	81 e0       	ldi	r24, 0x01	; 1
+			MoveTrain(1);	
+ 4c0:	59 df       	rcall	.-334    	; 0x374 <_Z9MoveTrainb>
+ 4c2:	7f 99       	sbic	0x0f, 7	; 15
 		}
 
 		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
- 464:	03 c0       	rjmp	.+6      	; 0x46c <__LOCK_REGION_LENGTH__+0x6c>
- 466:	80 91 00 02 	lds	r24, 0x0200	; 0x800200 <__DATA_REGION_ORIGIN__>
- 46a:	01 c0       	rjmp	.+2      	; 0x46e <__LOCK_REGION_LENGTH__+0x6e>
- 46c:	80 e0       	ldi	r24, 0x00	; 0
-		{
-		
+ 4c4:	03 c0       	rjmp	.+6      	; 0x4cc <main+0xb0>
+ 4c6:	80 91 02 02 	lds	r24, 0x0202	; 0x800202 <IsTableChosen>
+ 4ca:	01 c0       	rjmp	.+2      	; 0x4ce <main+0xb2>
+ 4cc:	80 e0       	ldi	r24, 0x00	; 0
+		{		
 			SetLEDMove(0,1);
- 46e:	88 23       	and	r24, r24
- 470:	29 f0       	breq	.+10     	; 0x47c <__LOCK_REGION_LENGTH__+0x7c>
- 472:	61 e0       	ldi	r22, 0x01	; 1
- 474:	80 e0       	ldi	r24, 0x00	; 0
+ 4ce:	88 23       	and	r24, r24
+ 4d0:	29 f0       	breq	.+10     	; 0x4dc <main+0xc0>
+ 4d2:	61 e0       	ldi	r22, 0x01	; 1
+ 4d4:	80 e0       	ldi	r24, 0x00	; 0
 			MoveTrain(0);
- 476:	98 df       	rcall	.-208    	; 0x3a8 <_Z10SetLEDMovebb>
- 478:	80 e0       	ldi	r24, 0x00	; 0
- 47a:	73 df       	rcall	.-282    	; 0x362 <_Z9MoveTrainb>
-
+ 4d6:	71 df       	rcall	.-286    	; 0x3ba <_Z10SetLEDMovebb>
+ 4d8:	80 e0       	ldi	r24, 0x00	; 0
+ 4da:	4c df       	rcall	.-360    	; 0x374 <_Z9MoveTrainb>
 		}
 
 
 		if (!(PINF & (1 << StopButton)))
- 47c:	7d 99       	sbic	0x0f, 5	; 15
- 47e:	06 c0       	rjmp	.+12     	; 0x48c <__LOCK_REGION_LENGTH__+0x8c>
+ 4dc:	7d 99       	sbic	0x0f, 5	; 15
+ 4de:	04 c0       	rjmp	.+8      	; 0x4e8 <main+0xcc>
 		{
 			SetLEDMove(0,0);
- 480:	60 e0       	ldi	r22, 0x00	; 0
- 482:	80 e0       	ldi	r24, 0x00	; 0
- 484:	91 df       	rcall	.-222    	; 0x3a8 <_Z10SetLEDMovebb>
- 486:	3e df       	rcall	.-388    	; 0x304 <_Z9StopTrainv>
+ 4e0:	60 e0       	ldi	r22, 0x00	; 0
+ 4e2:	80 e0       	ldi	r24, 0x00	; 0
+ 4e4:	6a df       	rcall	.-300    	; 0x3ba <_Z10SetLEDMovebb>
 			StopTrain();
- 488:	10 92 01 02 	sts	0x0201, r1	; 0x800201 <IsTrainMoving>
-			IsTrainMoving = false; // останавливаем поезд
- 48c:	83 ed       	ldi	r24, 0xD3	; 211
- 48e:	90 e3       	ldi	r25, 0x30	; 48
- 490:	01 97       	sbiw	r24, 0x01	; 1
- 492:	f1 f7       	brne	.-4      	; 0x490 <__LOCK_REGION_LENGTH__+0x90>
- 494:	00 c0       	rjmp	.+0      	; 0x496 <__LOCK_REGION_LENGTH__+0x96>
- 496:	00 00       	nop
- 498:	ab cf       	rjmp	.-170    	; 0x3f0 <main+0x24>
+ 4e6:	12 df       	rcall	.-476    	; 0x30c <_Z9StopTrainv>
+ 4e8:	32 99       	sbic	0x06, 2	; 6
+		}
+		
+		
+		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
+ 4ea:	04 c0       	rjmp	.+8      	; 0x4f4 <main+0xd8>
+ 4ec:	01 9b       	sbis	0x00, 1	; 0
+ 4ee:	04 c0       	rjmp	.+8      	; 0x4f8 <main+0xdc>
+ 4f0:	80 e0       	ldi	r24, 0x00	; 0
+ 4f2:	03 c0       	rjmp	.+6      	; 0x4fa <main+0xde>
+ 4f4:	80 e0       	ldi	r24, 0x00	; 0
+ 4f6:	01 c0       	rjmp	.+2      	; 0x4fa <main+0xde>
+ 4f8:	81 e0       	ldi	r24, 0x01	; 1
+ 4fa:	81 11       	cpse	r24, r1
+		{
+			StopTrain();
+ 4fc:	07 df       	rcall	.-498    	; 0x30c <_Z9StopTrainv>
+ 4fe:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <__TEXT_REGION_LENGTH__+0x7c0109>
+		}
 
-0000049a <_exit>:
- 49a:	f8 94       	cli
+		if (!(PINL & (1 << TableSensor_1))&& !(PINA & (1 << ReversPin))) 
+ 502:	80 fd       	sbrc	r24, 0
+ 504:	04 c0       	rjmp	.+8      	; 0x50e <main+0xf2>
+ 506:	01 9b       	sbis	0x00, 1	; 0
+ 508:	04 c0       	rjmp	.+8      	; 0x512 <main+0xf6>
+ 50a:	80 e0       	ldi	r24, 0x00	; 0
+ 50c:	03 c0       	rjmp	.+6      	; 0x514 <main+0xf8>
+ 50e:	80 e0       	ldi	r24, 0x00	; 0
+ 510:	01 c0       	rjmp	.+2      	; 0x514 <main+0xf8>
+ 512:	81 e0       	ldi	r24, 0x01	; 1
+ 514:	81 11       	cpse	r24, r1
+ 516:	63 df       	rcall	.-314    	; 0x3de <_Z8SlowModev>
+		{
+			SlowMode();
+ 518:	83 ed       	ldi	r24, 0xD3	; 211
+ 51a:	90 e3       	ldi	r25, 0x30	; 48
+ 51c:	01 97       	sbiw	r24, 0x01	; 1
+ 51e:	f1 f7       	brne	.-4      	; 0x51c <main+0x100>
+ 520:	00 c0       	rjmp	.+0      	; 0x522 <main+0x106>
+ 522:	00 00       	nop
+ 524:	95 cf       	rjmp	.-214    	; 0x450 <main+0x34>
 
-0000049c <__stop_program>:
- 49c:	ff cf       	rjmp	.-2      	; 0x49c <__stop_program>
+00000526 <_exit>:
+ 526:	f8 94       	cli
+
+00000528 <__stop_program>:
+ 528:	ff cf       	rjmp	.-2      	; 0x528 <__stop_program>
