@@ -21,27 +21,31 @@
 #define MoveForwarLED PK6
 #define MoveBackwardLED PK7 
 
-#define ReversPin PA1
+#define ReversPin PA1	  //D23
 
-#define RailSwitchL_1 PA2
-#define RailSwitchR_1 PA3
+#define RailSwitchL_1 PA2 //D24
+#define RailSwitchR_1 PA3 //D25
 
-#define RailSwitchL_2 PA4
-#define RailSwitchR_2 PA5
+#define RailSwitchL_2 PA4 //D26
+#define RailSwitchR_2 PA5 //D27
 
-#define RailSwitchL_3 PA6
-#define RailSwitchR_3 PA7
+#define RailSwitchL_3 PA6 //D228
+#define RailSwitchR_3 PA7 //D229
 
-#define RailSwitchL_4 PC5
-#define RailSwitchR_4 PC6
+#define RailSwitchL_4 PC5 //D31
+#define RailSwitchR_4 PC6 //D32
 
-#define EndWaySensor PC2
+#define EndWaySensor PC2 //D35
 
-#define TableSensor_1 PL0 // D49
-#define TableSensor_2 PL1 // D48
-#define TableSensor_3 PL2 // D47
-#define TableSensor_4 PL3 // D46
-#define TableSensor_5 PL4 // D45
+#define TableSensor PL0 // D49
+#define KitchenSensor PL7 //42
+
+
+#define SwitchTable_1 PG1 //D40
+#define SwitchTable_2 PG2 //D39
+#define SwitchTable_3 PD7 //D38
+#define SwitchTable_4 PC0 //D37
+#define SwitchTable_5 PC1 //D36
 
 #define Gear_1_Pin PD3
 #define Gear_2_Pin PD2
@@ -50,7 +54,7 @@
 
 bool IsTrainMoving = false;
 bool IsTableChosen = false;
-
+bool IsTrainArrivedToTable = false;
 
 int ChoisenTableNumber = 0; 
 
@@ -147,19 +151,18 @@ void AdjustWay(int ChosenTable)
 	}
 }
 
+
 void TurnOnButtonLED(int ChosenTable)
 {
 	// Выключаем все светодиоды
 	PORTK &= ~((1 << TableLED_1) | (1 << TableLED_2) | (1 << TableLED_3) | (1 << TableLED_4) | (1 << TableLED_5)); // | (1 << TableLED_6));
-	// Включаем выбранный светодиод
-	PORTK |= (1 << (ChosenTable - 1));
-}
 
-void StopTrain()
-{
-	IsTrainMoving = false;
-	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));	
-	PORTA &=~ (1 << ReversPin);
+	// Включаем выбранный светодиод если был передан номер отличный от нуля, если ноль то все свтодиоды просто выключаются
+	if (ChosenTable != 0)
+	{
+			PORTK |= (1 << (ChosenTable - 1));
+	}
+	
 }
 
 void MakeTrainMove() 
@@ -174,6 +177,28 @@ void MakeTrainMove()
 	PORTD |= (1 << Gear_4_Pin);	
 	
 	IsTrainMoving = true;
+}
+
+void SetLEDMove (bool forwardLED, bool backwardLED)
+{
+	PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
+	
+	if (forwardLED == 1)
+	{
+		PORTK|= (1 << MoveForwarLED);
+	}
+	if (backwardLED == 1)
+	{
+		PORTK|= (1 << MoveBackwardLED);
+	}
+}
+
+void StopTrain()
+{
+	IsTrainMoving = false;
+	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));
+	PORTA &=~ (1 << ReversPin);
+	SetLEDMove(0,0);
 }
 
 void MoveTrain(bool direction)
@@ -193,20 +218,6 @@ void MoveTrain(bool direction)
 
 
 	MakeTrainMove();
-}
-
-void SetLEDMove (bool forwardLED, bool backwardLED)
-{
-	PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
-	
-	if (forwardLED == 1)
-	{
-		PORTK|= (1 << MoveForwarLED);
-	}
-	if (backwardLED == 1)
-	{
-		PORTK|= (1 << MoveBackwardLED);		
-	}
 }
 
 void SlowMode () 
@@ -242,7 +253,7 @@ int main(void)
 	
 	// Настраиваем порты датчика перехода на тихий ход
 	
-	DDRL &= ~ ((1 << TableSensor_1) | (1 << TableSensor_2) | (1<< TableSensor_3) | (1 << TableSensor_4) | (1 << TableSensor_5));
+	DDRL &= ~ (1 << TableSensor);
 
 
 	while (1)
@@ -281,38 +292,49 @@ int main(void)
 				AdjustWay(5);       // Передача указателя на порт для стола 1
 			}	
 		}
-
-		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
+		
+		// Если была нажата кнопка движения поезда вперед, проверяется условие был ли выбран стол и не находится ли локомотив вконце пути
+		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true && IsTrainArrivedToTable == false)
 		{
 			SetLEDMove(1,0);
 			MoveTrain(1);	
 		}
-
+		
+		
 		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
 		{		
 			SetLEDMove(0,1);
 			MoveTrain(0);
+			IsTrainArrivedToTable = false;
 		}
 
-
+		// Если нажата кнопка остановки 
 		if (!(PINF & (1 << StopButton)))
 		{
 			SetLEDMove(0,0);
 			StopTrain();
 		}
 		
-		
+		// Если локомотив наехал на датчик окончания пути на столе, проверяется условия не включен ли реверс дивжения 
 		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
 		{
 			StopTrain();
+			IsTrainArrivedToTable = true;
 		}
 
-		if (!(PINL & (1 << TableSensor_1))&& !(PINA & (1 << ReversPin))) 
+		if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
 		{
 			SlowMode();
-		}		
-		_delay_ms(50);
+		}
 		
+		// Если поезд наехал на замеделния при подъезде к кухне 
+		if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
+		{
+			SlowMode();
+			TurnOnButtonLED(0);
+		}
+				
+		_delay_ms(50);		
 	}
 
 	return 0;
