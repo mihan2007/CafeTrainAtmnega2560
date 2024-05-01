@@ -38,8 +38,10 @@
 #define EndWaySensor PC2 //D35
 
 #define TableSensor PL0 // D49
-#define KitchenSensor PL7 //42
 
+#define StartPointSencor PL1 //D48
+
+#define KitchenSensor PL7 //42
 
 #define SwitchTable_1 PG1 //D40
 #define SwitchTable_2 PG2 //D39
@@ -321,7 +323,7 @@ int main(void)
 			StopTrain();
 			IsTrainArrivedToTable = true;
 		}
-
+		// если поезд едет вперед и наезжает на датчик замедления
 		if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
 		{
 			SlowMode();
@@ -333,6 +335,18 @@ int main(void)
 			SlowMode();
 			TurnOnButtonLED(0);
 		}
+		
+		// Если локомотив наехал на датчик замедления для кухни
+		if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
+		{
+			SlowMode();
+		}
+		// Если локомотив наехал на датчик выключния поезда
+		if (!(PINL & (1 << StartPointSencor)) && PINA & (1 << ReversPin))
+		{
+			StopTrain();
+			TurnOnButtonLED(0);
+		}		
 				
 		_delay_ms(50);		
 	}
