@@ -128,23 +128,22 @@ void AdjustWay(int ChosenTable)
 		break;
 		
 		case 5:
-
 		PORTA |= (1 << RailSwitchR_1);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_1);
-	
-		PORTA | (1 << RailSwitchR_2);
+		
+		PORTA |= (1 << RailSwitchR_2);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_2);
-	
+
 		PORTA |= (1 << RailSwitchR_3);
 		_delay_ms(DelayBWRailSwitch);
 		PORTA &= ~ (1 << RailSwitchR_3);
-	
+
 		PORTC |= (1 << RailSwitchR_4);
 		_delay_ms(DelayBWRailSwitch);
 		PORTC &= ~ (1 << RailSwitchR_4);
-
+					
 		break;
 		
 		default:
@@ -152,7 +151,6 @@ void AdjustWay(int ChosenTable)
 		break;
 	}
 }
-
 
 void TurnOnButtonLED(int ChosenTable)
 {
@@ -327,26 +325,22 @@ int main(void)
 		if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
 		{
 			SlowMode();
-		}
+					}
 		
 		// Если поезд наехал на замеделния при подъезде к кухне 
 		if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
 		{
 			SlowMode();
 			TurnOnButtonLED(0);
+			IsTableChosen = false;
 		}
 		
-		// Если локомотив наехал на датчик замедления для кухни
-		if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
-		{
-			SlowMode();
-		}
 		// Если локомотив наехал на датчик выключния поезда
 		if (!(PINL & (1 << StartPointSencor)) && PINA & (1 << ReversPin))
 		{
 			StopTrain();
-			TurnOnButtonLED(0);
-		}		
+			//TurnOnButtonLED(0);
+		} 		
 				
 		_delay_ms(50);		
 	}
