@@ -39,7 +39,7 @@
 
 #define TableSensor PL0
 #define StartPointSencor PL1
-#define GroundRail PL6
+#define ShortSircuitPin PL6
 #define KitchenSensor PL7
 
 #define SwitchTable_1 PG1
@@ -53,292 +53,391 @@
 #define Gear_3_Pin PD1
 #define Gear_4_Pin PD0
 
+#define SMOOTH_FADE_DOWN_DELAY 100
+
+int SlowModeSpeed = 90;
+int FullЕhrottlSpeed = 255;
+
+int ShortCircuitWaitingTime = 100;
+
+
+
+
 bool IsTrainMoving = false;
+bool IsTrainStoped =false;
 bool IsTableChosen = false;
 bool IsTrainArrivedToTable = false;
 
 bool previousButtonState[8] = {false};
 
+unsigned long shortCircuitStartTime = 0;
+unsigned long shortCircuitDelayTime = 0;
+bool shortCircuitDetected = false;
+bool shortCircuitDelayCompleted = false;
+
 void SwithOffAllTables()
 {
-	PORTG &= ~((1 << SwitchTable_1) | (1 << SwitchTable_2));
-	PORTD &= ~(1 << SwitchTable_3);
-	PORTC &= ~((1 << SwitchTable_4) | (1 << SwitchTable_5));
+    PORTG &= ~((1 << SwitchTable_1) | (1 << SwitchTable_2));
+    PORTD &= ~(1 << SwitchTable_3);
+    PORTC &= ~((1 << SwitchTable_4) | (1 << SwitchTable_5));
 }
 
 void AdjustWay(int ChosenTable)
 {
-	SwithOffAllTables();
-	
-	int DelayBWRailSwitch = 1000;
-	
-	IsTableChosen = true;
-	
-	switch (ChosenTable)
-	{
-		case 1:
-		PORTA |= (1 << RailSwitchL_1);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchL_1);
-		
-		PORTG |= (1 << SwitchTable_1);
-		break;
-		
-		case 2:
-		PORTA |= (1 << RailSwitchR_1);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_1);
-		
-		PORTA |= (1 << RailSwitchL_2);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchL_2);
-		
-		PORTG |= (1 << SwitchTable_2);
-		break;
-		
-		case 3:
-		PORTA |= (1 << RailSwitchR_1);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_1);
-		
-		PORTA |= (1 << RailSwitchR_2);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_2);
-		
-		PORTA |= (1 << RailSwitchL_3);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchL_3);
-		
-		PORTD |= (1 << SwitchTable_3);
-		break;
-		
-		case 4:
-		PORTA |= (1 << RailSwitchR_1);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_1);
-		
-		PORTA |= (1 << RailSwitchR_2);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_2);
-		
-		PORTA |= (1 << RailSwitchR_3);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_3);
-		
-		PORTC |= (1 << RailSwitchL_4);
-		_delay_ms(DelayBWRailSwitch);
-		PORTC &= ~ (1 << RailSwitchL_4);
-		
-		PORTC |= (1 << SwitchTable_4);
-		break;
-		
-		case 5:
-		PORTA |= (1 << RailSwitchR_1);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_1);
-		
-		PORTA |= (1 << RailSwitchR_2);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_2);
+    SwithOffAllTables();
+    
+    int DelayBWRailSwitch = 1000;
+    
+    IsTableChosen = true;
+    
+    switch (ChosenTable)
+    {
+        case 1:
+        PORTA |= (1 << RailSwitchL_1);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchL_1);
+        
+        PORTG |= (1 << SwitchTable_1);
+        break;
+        
+        case 2:
+        PORTA |= (1 << RailSwitchR_1);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_1);
+        
+        PORTA |= (1 << RailSwitchL_2);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchL_2);
+        
+        PORTG |= (1 << SwitchTable_2);
+        break;
+        
+        case 3:
+        PORTA |= (1 << RailSwitchR_1);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_1);
+        
+        PORTA |= (1 << RailSwitchR_2);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_2);
+        
+        PORTA |= (1 << RailSwitchL_3);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchL_3);
+        
+        PORTD |= (1 << SwitchTable_3);
+        break;
+        
+        case 4:
+        PORTA |= (1 << RailSwitchR_1);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_1);
+        
+        PORTA |= (1 << RailSwitchR_2);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_2);
+        
+        PORTA |= (1 << RailSwitchR_3);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_3);
+        
+        PORTC |= (1 << RailSwitchL_4);
+        _delay_ms(DelayBWRailSwitch);
+        PORTC &= ~ (1 << RailSwitchL_4);
+        
+        PORTC |= (1 << SwitchTable_4);
+        break;
+        
+        case 5:
+        PORTA |= (1 << RailSwitchR_1);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_1);
+        
+        PORTA |= (1 << RailSwitchR_2);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_2);
 
-		PORTA |= (1 << RailSwitchR_3);
-		_delay_ms(DelayBWRailSwitch);
-		PORTA &= ~ (1 << RailSwitchR_3);
+        PORTA |= (1 << RailSwitchR_3);
+        _delay_ms(DelayBWRailSwitch);
+        PORTA &= ~ (1 << RailSwitchR_3);
 
-		PORTC |= (1 << RailSwitchR_4);
-		_delay_ms(DelayBWRailSwitch);
-		PORTC &= ~ (1 << RailSwitchR_4);
-		
-		PORTC |= (1 << SwitchTable_5);
-		break;
-		
-		default:
-		break;
-	}
+        PORTC |= (1 << RailSwitchR_4);
+        _delay_ms(DelayBWRailSwitch);
+        PORTC &= ~ (1 << RailSwitchR_4);
+        
+        PORTC |= (1 << SwitchTable_5);
+        break;
+        
+        default:
+        break;
+    }
 }
 
 void TurnOnButtonLED(int ChosenTable)
 {
-	PORTK &= ~((1 << TableLED_1) | (1 << TableLED_2) | (1 << TableLED_3) | (1 << TableLED_4) | (1 << TableLED_5));
+    PORTK &= ~((1 << TableLED_1) | (1 << TableLED_2) | (1 << TableLED_3) | (1 << TableLED_4) | (1 << TableLED_5));
 
-	if (ChosenTable != 0)
-	{
-		PORTK |= (1 << (ChosenTable - 1));
-	}
+    if (ChosenTable != 0)
+    {
+        PORTK |= (1 << (ChosenTable - 1));
+    }
 }
 
 void SetLEDMove (bool forwardLED, bool backwardLED)
 {
-	PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
+    PORTK &= ~((1 << MoveBackwardLED) | (1 << MoveForwarLED));
+    
+    if (forwardLED == 1)
+    {
+        PORTK|= (1 << MoveForwarLED);
+    }
+    if (backwardLED == 1)
+    {
+        PORTK|= (1 << MoveBackwardLED);
+    }
 	
-	if (forwardLED == 1)
-	{
-		PORTK|= (1 << MoveForwarLED);
-	}
-	if (backwardLED == 1)
-	{
-		PORTK|= (1 << MoveBackwardLED);
-	}
+	OCR1A = 0;
 }
 
 void StopTrain()
 {
+	
+	OCR1A == 0;
 	IsTrainMoving = false;
-	PORTD &=~ ((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));
-	PORTA &=~ (1 << ReversPin);
-	PORTL &=~ (1 << GroundRail);
-	SetLEDMove(0,0);
+	PORTD &= ~((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));
+	PORTA &= ~(1 << ReversPin);
+	SetLEDMove(false, false);
+	shortCircuitDelayTime = 0;
 }
+
+
+
+void SlowMode(int Stage)
+{
+	PORTD |= (1 << Gear_1_Pin);
+	PORTD |= (1 << Gear_2_Pin);
+
+	if (Stage == 1)
+	{		
+		for (int i = 255; i >= 0; i--)
+		{
+			OCR1A = i;
+			_delay_ms(SMOOTH_FADE_DOWN_DELAY);
+
+			if (i <= SlowModeSpeed)
+			{
+				IsTrainMoving = false;
+				break;
+			}
+		}
+	}
+	
+	if (Stage == 2)
+	{
+		for (int i = SlowModeSpeed; i >= 0; i--)
+		{
+			OCR1A = i;
+			
+			_delay_ms(SMOOTH_FADE_DOWN_DELAY);
+			if (i == 0)
+			{
+				StopTrain();
+			}			
+		}			
+	}
+}
+
+void SetTrainSpeed(int Speed)
+{
+	OCR1A = Speed;
+}
+
+
+
+void SoftStart()
+{
+	if (IsTrainMoving)
+	{
+		return; // Exit the function if the train is not moving
+	}
+
+	PORTD |= (1 << Gear_2_Pin);	
+	PORTD |= (1 << Gear_1_Pin);
+
+	for (uint8_t i = 0; i <= 255; i++)
+	{
+
+		OCR1A = i;  // Set PWM value
+		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
+
+		if (i >= 250)
+		{
+			PORTD &= ~(1 << Gear_2_Pin);
+			break;  // Stop the function when OCR1A reaches 250
+		}
+	}
+
+	OCR1A = 0;
+}
+
 
 void MoveTrain(bool direction)
 {
-	if (direction == 1 && PINA & (1 << ReversPin))
-	{
-		StopTrain();
-		PORTA &=~ (1 << ReversPin);
-	}
+		if (IsTrainMoving)
+		{
+			return; // Exit the loop if the train stops moving
+		}
+		
+    if (direction == 1 && PINA & (1 << ReversPin))
+    {
+        StopTrain();
+        PORTA &=~ (1 << ReversPin);
+    }
 
-	if (direction == 0 && !(PINA & (1 << ReversPin)))
-	{
-		StopTrain();
-		SetLEDMove(0,1);
-		PORTA |= (1 << ReversPin);
-	}
+    if (direction == 0 && !(PINA & (1 << ReversPin)))
+    {
+        StopTrain();
+        SetLEDMove(0,1);
+        PORTA |= (1 << ReversPin);
+    }
 
-	PORTL |= (1 << GroundRail);
-	int stepDelay = 1000;
-	PORTD |= (1 << Gear_1_Pin);
-	_delay_ms(stepDelay);
-	PORTD |= (1 << Gear_2_Pin);
-	_delay_ms(stepDelay);
-	PORTD |= (1 << Gear_3_Pin);
-	_delay_ms(stepDelay);
-	PORTD |= (1 << Gear_4_Pin);
-
+	SoftStart();
+	
 	IsTrainMoving = true;
 }
 
-void SlowMode ()
-{
-	int stepDelay = 50;
-	PORTD &= ~ (1 << Gear_1_Pin);
-	_delay_ms(stepDelay);
-	PORTD &= ~ (1 << Gear_2_Pin);
-	_delay_ms(stepDelay);
-	PORTD |= (1 << Gear_3_Pin);
-	_delay_ms(stepDelay);
-	PORTD |= (1 << Gear_4_Pin);
-}
 
 bool isButtonPressed(uint8_t buttonPin, bool *previousState)
 {
-	if (!(PINF & (1 << buttonPin)))
-	{
-		if (!(*previousState))
-		{
-			*previousState = true;
-			_delay_ms(50); // Дебаунсинг задержка
-			return true;
-		}
-	}
-	else
-	{
-		*previousState = false;
-	}
-	return false;
+    if (!(PINF & (1 << buttonPin)))
+    {
+        if (!(*previousState))
+        {
+            *previousState = true;
+            _delay_ms(50); // Дебаунсинг задержка
+            return true;
+        }
+    }
+    else
+    {
+        *previousState = false;
+    }
+    return false;
 }
 
 int main(void)
 {
-	DDRF = 0x00;
-	DDRB &= ~(1 << StopButton);
-	DDRK = 0xFF;
-	PORTK = 0x00;
-	DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
-	DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4) | (1 << SwitchTable_4) | (1 << SwitchTable_5);
-	DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin) | (1 << SwitchTable_3);
-	DDRG |= (1 << SwitchTable_1) | (1 << SwitchTable_2);
-	DDRC &= ~(1 << EndWaySensor);
-	DDRL &= ~((1 << TableSensor) | (1 << KitchenSensor));
-	DDRL |= (1 << GroundRail);
+    DDRF = 0x00;
+    DDRB &= ~(1 << StopButton);
+    DDRK = 0xFF;
+    PORTK = 0x00;
+    DDRA |= (1 << RailSwitchL_1) | (1 << RailSwitchR_1) | (1 << RailSwitchL_2) | (1 << RailSwitchR_2) | (1 << RailSwitchL_3) | (1 << RailSwitchR_3) | (1 << ReversPin);
+    DDRC |= (1 << RailSwitchL_4) | (1 << RailSwitchR_4) | (1 << SwitchTable_4) | (1 << SwitchTable_5);
+    DDRD |= (1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin) | (1 << SwitchTable_3);
+    DDRG |= (1 << SwitchTable_1) | (1 << SwitchTable_2);
+    DDRC &= ~(1 << EndWaySensor);
+    DDRL &= ~((1 << TableSensor) | (1 << KitchenSensor) | (1 << ShortSircuitPin));
+	
+    // Настройка пина для ШИМ
+    DDRB |= (1 << PB5);  // Устанавливаем PB5 (соответствует цифровому пину 11) как выход
 
-	while (1)
-	{
-		if (IsTrainMoving == false)
-		{
-			if (isButtonPressed(TableButton_1, &previousButtonState[0]))
+    // Настройка таймера для ШИМ
+    // Используем Таймер 1: 16-битный таймер, частота 31.25 kHz
+    TCCR1A = (1 << COM1A1) | (1 << WGM10);  // Fast PWM mode, 8-bit
+    TCCR1B = (1 << WGM12) | (1 << CS10);    // Без предделителя, Fast PWM	
+
+    while (1)
+    {
+
+        if (IsTrainMoving == false)
+        {
+            if (isButtonPressed(TableButton_1, &previousButtonState[0]))
+            {
+                TurnOnButtonLED(1);
+                AdjustWay(1);
+            }
+
+            if (isButtonPressed(TableButton_2, &previousButtonState[1]))
+            {
+                TurnOnButtonLED(2);
+                AdjustWay(2);
+            }
+
+            if (isButtonPressed(TableButton_3, &previousButtonState[2]))
+            {
+                TurnOnButtonLED(3);
+                AdjustWay(3);
+            }
+
+            if (isButtonPressed(TableButton_4, &previousButtonState[3]))
+            {
+                TurnOnButtonLED(4);
+                AdjustWay(4);
+            }
+
+            if (isButtonPressed(TableButton_5, &previousButtonState[4]))
+            {
+                TurnOnButtonLED(5);
+                AdjustWay(5);
+            }
+        }
+        
+        if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true && IsTrainArrivedToTable == false)
+        {
+            SetLEDMove(1,0);
+            MoveTrain(1);
+        }
+        
+        if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
+        {
+            MoveTrain(0);
+            IsTrainArrivedToTable = false;
+        }
+
+        if (!(PINF & (1 << StopButton)))
+        {
+            StopTrain();
+        }
+        
+        if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
+        {
+            //StopTrain();
+            //IsTrainArrivedToTable = true;
+			SlowMode(2);
+        }
+        
+        if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
+        {
+            SlowMode(1);
+        }
+        
+        if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
+        {
+            SlowMode(2);
+            TurnOnButtonLED(0);
+            IsTableChosen = false;
+        }
+        
+        if (!(PINL & (1 << StartPointSencor)) && PINA & (1 << ReversPin))
+        {
+            StopTrain();
+        }
+		
+        // Проверка состояния пина ShortSircuitPin
+		/*if (!(PINL & (1 << ShortSircuitPin))) 
+		{		
+			if (IsTrainMoving && ++shortCircuitDelayTime >= 1000) 
 			{
-				TurnOnButtonLED(1);
-				AdjustWay(1);
-			}
-
-			if (isButtonPressed(TableButton_2, &previousButtonState[1]))
-			{
-				TurnOnButtonLED(2);
-				AdjustWay(2);
-			}
-
-			if (isButtonPressed(TableButton_3, &previousButtonState[2]))
-			{
-				TurnOnButtonLED(3);
-				AdjustWay(3);
-			}
-
-			if (isButtonPressed(TableButton_4, &previousButtonState[3]))
-			{
-				TurnOnButtonLED(4);
-				AdjustWay(4);
-			}
-
-			if (isButtonPressed(TableButton_5, &previousButtonState[4]))
-			{
-				TurnOnButtonLED(5);
-				AdjustWay(5);
+				StopTrain();
 			}
 		}
-		
-		if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true && IsTrainArrivedToTable == false)
+		else 
 		{
-			SetLEDMove(1,0);
-			MoveTrain(1);
-		}
-		
-		if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
-		{
-			MoveTrain(0);
-			IsTrainArrivedToTable = false;
-		}
+			shortCircuitDelayTime = 0; 		
+		}*/
 
-		if (!(PINF & (1 << StopButton)))
-		{
-			StopTrain();
-		}
-		
-		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
-		{
-			StopTrain();
-			IsTrainArrivedToTable = true;
-		}
-		
-		if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
-		{
-			SlowMode();
-		}
-		
-		if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
-		{
-			SlowMode();
-			TurnOnButtonLED(0);
-			IsTableChosen = false;
-		}
-		
-		if (!(PINL & (1 << StartPointSencor)) && PINA & (1 << ReversPin))
-		{
-			StopTrain();
-		}
-		
-		_delay_ms(50);
+        _delay_ms(50);
 	}
 
-	return 0;
+    return 0;
 }
