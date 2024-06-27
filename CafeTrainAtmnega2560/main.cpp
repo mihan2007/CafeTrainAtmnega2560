@@ -53,10 +53,10 @@
 #define Gear_3_Pin PD1
 #define Gear_4_Pin PD0
 
-#define SMOOTH_FADE_DOWN_DELAY 100
+#define SMOOTH_FADE_DOWN_DELAY 10
 
 int SlowModeSpeed = 90;
-int Full≈hrottlSpeed = 255;
+int FullThrottlSpeed = 255;
 
 int ShortCircuitWaitingTime = 100;
 
@@ -211,47 +211,41 @@ void StopTrain()
 }
 
 
-
-void SlowMode(int Stage)
-{
-	PORTD |= (1 << Gear_1_Pin);
-	PORTD |= (1 << Gear_2_Pin);
-
-	if (Stage == 1)
-	{		
-		for (int i = 255; i >= 0; i--)
-		{
-			OCR1A = i;
-			_delay_ms(SMOOTH_FADE_DOWN_DELAY);
-
-			if (i <= SlowModeSpeed)
-			{
-				IsTrainMoving = false;
-				break;
-			}
-		}
-	}
-	
-	if (Stage == 2)
-	{
-		for (int i = SlowModeSpeed; i >= 0; i--)
-		{
-			OCR1A = i;
-			
-			_delay_ms(SMOOTH_FADE_DOWN_DELAY);
-			if (i == 0)
-			{
-				StopTrain();
-			}			
-		}			
-	}
-}
-
 void SetTrainSpeed(int Speed)
 {
 	OCR1A = Speed;
 }
 
+void FadeDownSpeed(int startSpeed, int endSpeed)
+{
+	for (int i = startSpeed; i>=endSpeed; i--)
+	{
+		SetTrainSpeed(i);
+		_delay_ms(SMOOTH_FADE_DOWN_DELAY);
+	}
+}
+
+void SetPMWControlMode()
+{
+	PORTD |= (1 << Gear_1_Pin);
+	PORTD |= (1 << Gear_2_Pin);	
+}
+
+void SlowMode(int Stage)
+{
+	SetPMWControlMode();
+	
+	if (Stage == 1)
+	{
+		FadeDownSpeed(FullThrottlSpeed, SlowModeSpeed);
+	}
+	
+	if (Stage == 2)
+	{
+		FadeDownSpeed(SlowModeSpeed, 0);
+		StopTrain();
+	}
+}
 
 
 void SoftStart()
@@ -261,8 +255,7 @@ void SoftStart()
 		return; // Exit the function if the train is not moving
 	}
 
-	PORTD |= (1 << Gear_2_Pin);	
-	PORTD |= (1 << Gear_1_Pin);
+	SetPMWControlMode();
 
 	for (uint8_t i = 0; i <= 255; i++)
 	{
