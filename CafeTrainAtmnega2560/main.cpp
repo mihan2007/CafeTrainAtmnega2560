@@ -53,15 +53,14 @@
 #define Gear_3_Pin PD1
 #define Gear_4_Pin PD0
 
-#define SMOOTH_FADE_DOWN_DELAY 10
+#define SMOOTH_FADE_DOWN_DELAY 200 // пауза между шагами затухания больше 500 делать лучше не стоит
+#define SMOOTH_FADE_STOP_DELAY int 10000 // задержка междц шагами
+#define SLOW_MODE_SPEED 80
+#define STOP_PWM_LEVEL 40
 
-int SlowModeSpeed = 90;
 int FullThrottlSpeed = 255;
 
 int ShortCircuitWaitingTime = 100;
-
-
-
 
 bool IsTrainMoving = false;
 bool IsTrainStoped =false;
@@ -84,93 +83,93 @@ void SwithOffAllTables()
 
 void AdjustWay(int ChosenTable)
 {
-    SwithOffAllTables();
-    
-    int DelayBWRailSwitch = 1000;
-    
-    IsTableChosen = true;
-    
-    switch (ChosenTable)
-    {
-        case 1:
-        PORTA |= (1 << RailSwitchL_1);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchL_1);
-        
-        PORTG |= (1 << SwitchTable_1);
-        break;
-        
-        case 2:
-        PORTA |= (1 << RailSwitchR_1);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_1);
-        
-        PORTA |= (1 << RailSwitchL_2);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchL_2);
-        
-        PORTG |= (1 << SwitchTable_2);
-        break;
-        
-        case 3:
-        PORTA |= (1 << RailSwitchR_1);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_1);
-        
-        PORTA |= (1 << RailSwitchR_2);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_2);
-        
-        PORTA |= (1 << RailSwitchL_3);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchL_3);
-        
-        PORTD |= (1 << SwitchTable_3);
-        break;
-        
-        case 4:
-        PORTA |= (1 << RailSwitchR_1);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_1);
-        
-        PORTA |= (1 << RailSwitchR_2);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_2);
-        
-        PORTA |= (1 << RailSwitchR_3);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_3);
-        
-        PORTC |= (1 << RailSwitchL_4);
-        _delay_ms(DelayBWRailSwitch);
-        PORTC &= ~ (1 << RailSwitchL_4);
-        
-        PORTC |= (1 << SwitchTable_4);
-        break;
-        
-        case 5:
-        PORTA |= (1 << RailSwitchR_1);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_1);
-        
-        PORTA |= (1 << RailSwitchR_2);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_2);
+	SwithOffAllTables();
+	
+	int DelayBWRailSwitch = 1000;
+	
+	IsTableChosen = true;
+	
+	switch (ChosenTable)
+	{
+		case 1:
+		PORTA |= (1 << RailSwitchL_1);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchL_1);
+		
+		PORTG |= (1 << SwitchTable_1);
+		break;
+		
+		case 2:
+		PORTA |= (1 << RailSwitchR_1);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_1);
+		
+		PORTA |= (1 << RailSwitchL_2);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchL_2);
+		
+		PORTG |= (1 << SwitchTable_2);
+		break;
+		
+		case 3:
+		PORTA |= (1 << RailSwitchR_1);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_1);
+		
+		PORTA |= (1 << RailSwitchR_2);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_2);
+		
+		PORTA |= (1 << RailSwitchL_3);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchL_3);
+		
+		PORTD |= (1 << SwitchTable_3);
+		break;
+		
+		case 4:
+		PORTA |= (1 << RailSwitchR_1);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_1);
+		
+		PORTA |= (1 << RailSwitchR_2);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_2);
+		
+		PORTA |= (1 << RailSwitchR_3);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_3);
+		
+		PORTC |= (1 << RailSwitchL_4);
+		_delay_ms(DelayBWRailSwitch);
+		PORTC &= ~ (1 << RailSwitchL_4);
+		
+		PORTC |= (1 << SwitchTable_4);
+		break;
+		
+		case 5:
+		PORTA |= (1 << RailSwitchR_1);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_1);
+		
+		PORTA |= (1 << RailSwitchR_2);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_2);
 
-        PORTA |= (1 << RailSwitchR_3);
-        _delay_ms(DelayBWRailSwitch);
-        PORTA &= ~ (1 << RailSwitchR_3);
+		PORTA |= (1 << RailSwitchR_3);
+		_delay_ms(DelayBWRailSwitch);
+		PORTA &= ~ (1 << RailSwitchR_3);
 
-        PORTC |= (1 << RailSwitchR_4);
-        _delay_ms(DelayBWRailSwitch);
-        PORTC &= ~ (1 << RailSwitchR_4);
-        
-        PORTC |= (1 << SwitchTable_5);
-        break;
-        
-        default:
-        break;
-    }
+		PORTC |= (1 << RailSwitchR_4);
+		_delay_ms(DelayBWRailSwitch);
+		PORTC &= ~ (1 << RailSwitchR_4);
+		
+		PORTC |= (1 << SwitchTable_5);
+		break;
+		
+		default:
+		break;
+	}
 }
 
 void TurnOnButtonLED(int ChosenTable)
@@ -223,6 +222,7 @@ void FadeDownSpeed(int startSpeed, int endSpeed)
 		SetTrainSpeed(i);
 		_delay_ms(SMOOTH_FADE_DOWN_DELAY);
 	}
+	//OCR1A = 90;
 }
 
 void SetPMWControlMode()
@@ -233,17 +233,44 @@ void SetPMWControlMode()
 
 void SlowMode(int Stage)
 {
+	if (!IsTrainMoving)
+	{
+		return;
+	}
+
+	int borderSpeed = 95;
+	int slowSpeed =145;
+		
 	SetPMWControlMode();
-	
+
 	if (Stage == 1)
 	{
-		FadeDownSpeed(FullThrottlSpeed, SlowModeSpeed);
+		
+			for (int i = slowSpeed; i>= borderSpeed; i--)
+			{
+				SetTrainSpeed(i);
+				_delay_ms(100);
+				if (i == borderSpeed)
+				{
+					break;
+				}
+								
+			}
+	
 	}
 	
 	if (Stage == 2)
 	{
-		FadeDownSpeed(SlowModeSpeed, 0);
-		StopTrain();
+
+			for (int i = borderSpeed; i>= 80; i--)
+			{
+				SetTrainSpeed(i);
+				_delay_ms(1000);
+				
+			}			
+			IsTrainMoving = false;
+
+			StopTrain();	
 	}
 }
 
@@ -406,7 +433,7 @@ int main(void)
         
         if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
         {
-            SlowMode(2);
+            SlowMode(1);
             TurnOnButtonLED(0);
             IsTableChosen = false;
         }
