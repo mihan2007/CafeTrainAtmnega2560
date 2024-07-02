@@ -38,7 +38,7 @@
 #define EndWaySensor PC2
 
 #define TableSensor PL0
-#define StartPointSencor PL1
+#define StartPointSensor PL1
 #define ShortSircuitPin PL6
 #define KitchenSensor PL7
 
@@ -62,10 +62,14 @@ int FullThrottlSpeed = 255;
 
 int ShortCircuitWaitingTime = 100;
 
+bool IsTrainOnTheTable = false;
+bool IsTrainOnTheKitchen = false;
+
 bool IsTrainMoving = false;
-bool IsTrainStoped =false;
 bool IsTableChosen = false;
 bool IsTrainArrivedToTable = false;
+
+
 
 bool previousButtonState[8] = {false};
 
@@ -194,14 +198,11 @@ void SetLEDMove (bool forwardLED, bool backwardLED)
     {
         PORTK|= (1 << MoveBackwardLED);
     }
-	
-	OCR1A = 0;
 }
 
 void StopTrain()
-{
-	
-	OCR1A == 0;
+{	
+	OCR1A = 0;
 	IsTrainMoving = false;
 	PORTD &= ~((1 << Gear_1_Pin) | (1 << Gear_2_Pin) | (1 << Gear_3_Pin) | (1 << Gear_4_Pin));
 	PORTA &= ~(1 << ReversPin);
@@ -215,15 +216,6 @@ void SetTrainSpeed(int Speed)
 	OCR1A = Speed;
 }
 
-void FadeDownSpeed(int startSpeed, int endSpeed)
-{
-	for (int i = startSpeed; i>=endSpeed; i--)
-	{
-		SetTrainSpeed(i);
-		_delay_ms(SMOOTH_FADE_DOWN_DELAY);
-	}
-	//OCR1A = 90;
-}
 
 void SetPMWControlMode()
 {
@@ -246,30 +238,27 @@ void SlowMode(int Stage)
 	if (Stage == 1)
 	{
 		
-			for (int i = slowSpeed; i>= borderSpeed; i--)
-			{
-				SetTrainSpeed(i);
-				_delay_ms(100);
-				if (i == borderSpeed)
+		for (int i = slowSpeed; i>= borderSpeed; i--)
+		{
+			SetTrainSpeed(i);
+			_delay_ms(100);
+			
+			if (i == borderSpeed)
 				{
 					break;
-				}
-								
-			}
-	
+				}							
+		}
 	}
 	
 	if (Stage == 2)
 	{
-
 			for (int i = borderSpeed; i>= 80; i--)
 			{
 				SetTrainSpeed(i);
-				_delay_ms(1000);
-				
+				_delay_ms(1000);				
 			}			
-			IsTrainMoving = false;
 
+			IsTrainMoving = false;
 			StopTrain();	
 	}
 }
@@ -279,7 +268,7 @@ void SoftStart()
 {
 	if (IsTrainMoving)
 	{
-		return; // Exit the function if the train is not moving
+		return; // Защита от повторного нажатия, если поезд движется выйти из функции 
 	}
 
 	SetPMWControlMode();
@@ -303,15 +292,26 @@ void SoftStart()
 
 void MoveTrain(bool direction)
 {
-		if (IsTrainMoving)
-		{
-			return; // Exit the loop if the train stops moving
-		}
+	if (IsTrainMoving)
+	{
+		return; // Exit the loop if the train stops moving
+	}
+	
+	 if (IsTrainOnTheTable && direction == 1) // Если поезд находится в на столе запрет на движение вперед
+	 {
+		 return;
+	 }
+	 
+	 if (IsTrainOnTheKitchen && direction == 0) // Если поезд на на кухне запрет движения назад
+	 {
+		 return; 
+	 }	 
 		
     if (direction == 1 && PINA & (1 << ReversPin))
     {
-        StopTrain();
+		StopTrain();
         PORTA &=~ (1 << ReversPin);
+		SetLEDMove(1,0);
     }
 
     if (direction == 0 && !(PINA & (1 << ReversPin)))
@@ -369,7 +369,7 @@ int main(void)
     while (1)
     {
 
-        if (IsTrainMoving == false)
+        if (IsTrainMoving == false && IsTrainOnTheTable == false)
         {
             if (isButtonPressed(TableButton_1, &previousButtonState[0]))
             {
@@ -402,16 +402,18 @@ int main(void)
             }
         }
         
-        if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true && IsTrainArrivedToTable == false)
+        if (!(PINF & (1 << MoveForwardButton)) && IsTableChosen == true)
         {
-            SetLEDMove(1,0);
             MoveTrain(1);
+			IsTrainOnTheKitchen = false;
+		
         }
         
         if (!(PINF & (1 << MoveBackwardButton)) && IsTableChosen == true)
         {
-            MoveTrain(0);
-            IsTrainArrivedToTable = false;
+
+			MoveTrain(0);
+			IsTrainOnTheTable = false;
         }
 
         if (!(PINF & (1 << StopButton)))
@@ -421,9 +423,9 @@ int main(void)
         
         if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
         {
-            //StopTrain();
-            //IsTrainArrivedToTable = true;
 			SlowMode(2);
+			IsTrainOnTheTable = true;
+			StopTrain();
         }
         
         if (!(PINL & (1 << TableSensor)) && !(PINA & (1 << ReversPin)))
@@ -434,13 +436,15 @@ int main(void)
         if (!(PINL & (1 << KitchenSensor)) && PINA & (1 << ReversPin))
         {
             SlowMode(1);
-            TurnOnButtonLED(0);
-            IsTableChosen = false;
         }
         
-        if (!(PINL & (1 << StartPointSencor)) && PINA & (1 << ReversPin))
+        if (!(PINL & (1 << StartPointSensor)) && PINA & (1 << ReversPin))
         {
-            StopTrain();
+			SlowMode(2);
+		    StopTrain();
+			TurnOnButtonLED(0);
+			IsTableChosen = false;
+			IsTrainOnTheKitchen = true;
         }
 		
         // Проверка состояния пина ShortSircuitPin
