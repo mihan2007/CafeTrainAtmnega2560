@@ -69,8 +69,6 @@ bool IsTrainMoving = false;
 bool IsTableChosen = false;
 bool IsTrainArrivedToTable = false;
 
-
-
 bool previousButtonState[8] = {false};
 
 unsigned long shortCircuitStartTime = 0;
@@ -78,12 +76,16 @@ unsigned long shortCircuitDelayTime = 0;
 bool shortCircuitDetected = false;
 bool shortCircuitDelayCompleted = false;
 
+volatile unsigned long millis_counter = 0;
+
 void SwithOffAllTables()
 {
     PORTG &= ~((1 << SwitchTable_1) | (1 << SwitchTable_2));
     PORTD &= ~(1 << SwitchTable_3);
     PORTC &= ~((1 << SwitchTable_4) | (1 << SwitchTable_5));
 }
+
+
 
 void AdjustWay(int ChosenTable)
 {
@@ -200,6 +202,7 @@ void SetLEDMove (bool forwardLED, bool backwardLED)
     }
 }
 
+
 void StopTrain()
 {	
 	OCR1A = 0;
@@ -223,6 +226,7 @@ void SetPMWControlMode()
 	PORTD |= (1 << Gear_2_Pin);	
 }
 
+
 void SlowMode(int Stage)
 {
 	if (!IsTrainMoving)
@@ -238,15 +242,11 @@ void SlowMode(int Stage)
 	if (Stage == 1)
 	{
 		
-		for (int i = slowSpeed; i>= borderSpeed; i--)
+		for (int i = slowSpeed; i >= borderSpeed; i--)
 		{
+			//CheckInteruption();
 			SetTrainSpeed(i);
-			_delay_ms(100);
-			
-			if (i == borderSpeed)
-				{
-					break;
-				}							
+			_delay_ms(100);							
 		}
 	}
 	
@@ -263,19 +263,30 @@ void SlowMode(int Stage)
 	}
 }
 
+void CheckInteruption()
+{
+	if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
+	{
+		//SlowMode(2);
+		//IsTrainOnTheTable = true;
+		//StopTrain();
+		IsTrainMoving = true;
+	}
+}
 
 void SoftStart()
 {
-	if (IsTrainMoving)
-	{
-		return; // Защита от повторного нажатия, если поезд движется выйти из функции 
-	}
 
 	SetPMWControlMode();
 
 	for (uint8_t i = 0; i <= 255; i++)
 	{
-
+		if (IsTrainMoving)
+		{
+			return; // Защита от повторного нажатия, если поезд движется выйти из функции
+		}
+				
+		CheckInteruption();
 		OCR1A = i;  // Set PWM value
 		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
 
@@ -288,6 +299,7 @@ void SoftStart()
 
 	OCR1A = 0;
 }
+
 
 
 void MoveTrain(bool direction)
