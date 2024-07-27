@@ -275,12 +275,29 @@ void SoftStart()
 
 	for (uint8_t i = 0; i <= 255; i++)
 	{
+		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
+		{
+			
+			break;
+		}
+			
+        if (!(PINL & (1 << StartPointSensor)) && PINA & (1 << ReversPin))
+        {
+			break;
+        }
+
+        if (!(PINF & (1 << StopButton)))
+        {
+            StopTrain();
+			OCR1A = 0;
+			break;
+        }
 
 		OCR1A = i;  // Set PWM value
 		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
 
 		if (i >= 250)
-		{
+		{			
 			PORTD &= ~(1 << Gear_2_Pin);
 			break;  // Stop the function when OCR1A reaches 250
 		}
