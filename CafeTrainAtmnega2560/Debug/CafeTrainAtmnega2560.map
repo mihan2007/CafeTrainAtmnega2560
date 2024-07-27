@@ -14,8 +14,6 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
- .bss.millis_counter
-                0x00000000        0x4 main.o
  .bss.shortCircuitDelayCompleted
                 0x00000000        0x1 main.o
  .bss.shortCircuitDetected
@@ -28,12 +26,6 @@ Discarded input sections
                 0x00000000        0x2 main.o
  .data.FullThrottlSpeed
                 0x00000000        0x2 main.o
- .text          0x00000000        0x0 MoveFunction.o
- .data          0x00000000        0x0 MoveFunction.o
- .bss           0x00000000        0x0 MoveFunction.o
- .debug_line    0x00000000        0x0 MoveFunction.o
- .debug_str     0x00000000      0x153 MoveFunction.o
- .comment       0x00000000       0x31 MoveFunction.o
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
@@ -100,7 +92,6 @@ Linker script and memory map
 Address of section .data set to 0x800200
 LOAD C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
 LOAD main.o
-LOAD MoveFunction.o
 START GROUP
 LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a
 END GROUP
@@ -212,7 +203,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x702
+.text           0x00000000      0x6ea
  *(.vectors)
  .vectors       0x00000000       0xe4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
                 0x00000000                __vector_default
@@ -352,27 +343,24 @@ END GROUP
                 0x000003c6        0xe main.o
                 0x000003c6                _Z17SetPMWControlModev
  .text._Z8SlowModei
-                0x000003d4       0x72 main.o
+                0x000003d4       0x78 main.o
                 0x000003d4                _Z8SlowModei
- .text._Z16CheckInteruptionv
-                0x00000446       0x1e main.o
-                0x00000446                _Z16CheckInteruptionv
  .text._Z9SoftStartv
-                0x00000464       0x44 main.o
-                0x00000464                _Z9SoftStartv
+                0x0000044c       0x3e main.o
+                0x0000044c                _Z9SoftStartv
  .text._Z9MoveTrainb
-                0x000004a8       0x72 main.o
-                0x000004a8                _Z9MoveTrainb
+                0x0000048a       0x72 main.o
+                0x0000048a                _Z9MoveTrainb
  .text._Z15isButtonPressedhPb
-                0x0000051a       0x3a main.o
-                0x0000051a                _Z15isButtonPressedhPb
- .text.main     0x00000554      0x1aa main.o
-                0x00000554                main
-                0x000006fe                . = ALIGN (0x2)
+                0x000004fc       0x3a main.o
+                0x000004fc                _Z15isButtonPressedhPb
+ .text.main     0x00000536      0x1b0 main.o
+                0x00000536                main
+                0x000006e6                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000006fe        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
-                0x000006fe                _exit
-                0x000006fe                exit
+ .fini9         0x000006e6        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+                0x000006e6                _exit
+                0x000006e6                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -391,11 +379,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000006fe        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+ .fini0         0x000006e6        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000702                _etext = .
+                0x000006ea                _etext = .
 
-.data           0x00800200        0x0 load address 0x00000702
+.data           0x00800200        0x0 load address 0x000006ea
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -431,8 +419,8 @@ END GROUP
                 0x0080020f                IsTrainOnTheTable
  *(COMMON)
                 0x00800210                PROVIDE (__bss_end, .)
-                0x00000702                __data_load_start = LOADADDR (.data)
-                0x00000702                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000006ea                __data_load_start = LOADADDR (.data)
+                0x000006ea                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800210        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -503,42 +491,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x80
+.debug_aranges  0x00000000       0x78
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x80 main.o
+                0x00000000       0x78 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1759
+.debug_info     0x00000000     0x1733
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_info    0x00000bbc      0xb9d main.o
+ .debug_info    0x00000bbc      0xb77 main.o
 
-.debug_abbrev   0x00000000      0xdaf
+.debug_abbrev   0x00000000      0xdaa
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_abbrev  0x00000b1a      0x295 main.o
+ .debug_abbrev  0x00000b1a      0x290 main.o
 
-.debug_line     0x00000000      0x988
+.debug_line     0x00000000      0x949
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1fa C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_line    0x000001fa      0x78e main.o
+ .debug_line    0x000001fa      0x74f main.o
 
-.debug_frame    0x00000000      0x118
+.debug_frame    0x00000000      0x100
  *(.debug_frame)
- .debug_frame   0x00000000      0x118 main.o
+ .debug_frame   0x00000000      0x100 main.o
 
-.debug_str      0x00000000      0x8b5
+.debug_str      0x00000000      0x87f
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_str     0x000003e6      0x4cf main.o
-                                0x509 (size before relaxing)
+ .debug_str     0x000003e6      0x499 main.o
+                                0x4d3 (size before relaxing)
 
-.debug_loc      0x00000000      0x776
+.debug_loc      0x00000000      0x76a
  *(.debug_loc)
- .debug_loc     0x00000000      0x776 main.o
+ .debug_loc     0x00000000      0x76a main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -558,9 +546,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x88
+.debug_ranges   0x00000000       0x80
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x88 main.o
+ .debug_ranges  0x00000000       0x80 main.o
 
 .debug_macro
  *(.debug_macro)
