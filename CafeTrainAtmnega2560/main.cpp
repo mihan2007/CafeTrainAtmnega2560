@@ -1,62 +1,11 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdbool.h>
-
-#define TableButton_1 PF0
-#define TableButton_2 PF1
-#define TableButton_3 PF2
-#define TableButton_4 PF3
-#define TableButton_5 PF4
-#define StopButton PF5
-
-#define MoveForwardButton PF6
-#define MoveBackwardButton PF7
-
-#define TableLED_1 PK0
-#define TableLED_2 PK1
-#define TableLED_3 PK2
-#define TableLED_4 PK3
-#define TableLED_5 PK4
-
-#define MoveForwarLED PK6
-#define MoveBackwardLED PK7
-
-#define ReversPin PA1
-
-#define RailSwitchL_1 PA2
-#define RailSwitchR_1 PA3
-
-#define RailSwitchL_2 PA4
-#define RailSwitchR_2 PA5
-
-#define RailSwitchL_3 PA6
-#define RailSwitchR_3 PA7
-
-#define RailSwitchL_4 PC5
-#define RailSwitchR_4 PC6
-
-#define EndWaySensor PC2
-
-#define TableSensor PL0
-#define StartPointSensor PL1
-#define ShortSircuitPin PL6
-#define KitchenSensor PL7
-
-#define SwitchTable_1 PG1
-#define SwitchTable_2 PG2
-#define SwitchTable_3 PD7
-#define SwitchTable_4 PC0
-#define SwitchTable_5 PC1
-
-#define Gear_1_Pin PD3
-#define Gear_2_Pin PD2
-#define Gear_3_Pin PD1
-#define Gear_4_Pin PD0
-
-#define SMOOTH_FADE_DOWN_DELAY 200 // пауза между шагами затухания больше 500 делать лучше не стоит
-#define SMOOTH_FADE_STOP_DELAY int 10000 // задержка междц шагами
-#define SLOW_MODE_SPEED 80
-#define STOP_PWM_LEVEL 40
+#include "config.h"
+#include "buttonsAndSensors.h"
+#include "LEDs.h"
+#include "railSwitches.h"
+#include "trainConfig.h"
 
 int FullThrottlSpeed = 255;
 
@@ -68,8 +17,6 @@ bool IsTrainOnTheKitchen = false;
 bool IsTrainMoving = false;
 bool IsTableChosen = false;
 bool IsTrainArrivedToTable = false;
-
-
 
 bool previousButtonState[8] = {false};
 
@@ -263,7 +210,10 @@ void SlowMode(int Stage)
 	}
 }
 
-
+void CheckItruption()
+{
+	
+}
 void SoftStart()
 {
 	if (IsTrainMoving)
@@ -273,11 +223,11 @@ void SoftStart()
 
 	SetPMWControlMode();
 
-	for (uint8_t i = 0; i <= 255; i++)
+	for (uint8_t i = 0; i <= FullThrottlSpeed; i++)
 	{
+		
 		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
-		{
-			
+		{			
 			break;
 		}
 			
@@ -293,14 +243,14 @@ void SoftStart()
 			break;
         }
 
-		OCR1A = i;  // Set PWM value
-		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
-
-		if (i >= 250)
+		if (i >= FullThrottlSpeed)
 		{			
 			PORTD &= ~(1 << Gear_2_Pin);
 			break;  // Stop the function when OCR1A reaches 250
 		}
+
+		OCR1A = i;  // Set PWM value
+		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
 	}
 
 	OCR1A = 0;
