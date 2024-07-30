@@ -109,7 +109,7 @@ void AdjustWay(int ChosenTable)
 		
 		PORTG |= (1 << SwitchTable_1);
 		
-		PORTB |= (1 << SemaforTable_Pin_1);
+		//PORTB |= (1 << SemaforTable_Pin_1);
 		
 		break;
 		
@@ -124,7 +124,7 @@ void AdjustWay(int ChosenTable)
 		
 		PORTG |= (1 << SwitchTable_2);
 		
-		PORTB |= (1 << SemaforTable_Pin_2);
+		//PORTB |= (1 << SemaforTable_Pin_2);
 		break;
 		
 		case 3:
@@ -142,7 +142,7 @@ void AdjustWay(int ChosenTable)
 		
 		PORTD |= (1 << SwitchTable_3);
 		
-		PORTB |= (1 << SemaforTable_Pin_3);
+		//PORTB |= (1 << SemaforTable_Pin_3);
 		break;
 		
 		case 4:
@@ -164,7 +164,7 @@ void AdjustWay(int ChosenTable)
 		
 		PORTC |= (1 << SwitchTable_4);
 		
-		PORTD |= (1 << SwitchTable_4);
+		//PORTD |= (1 << SwitchTable_4);
 		break;
 		
 		case 5:
@@ -186,7 +186,7 @@ void AdjustWay(int ChosenTable)
 		
 		PORTC |= (1 << SwitchTable_5);
 		
-		PORTD |= (1 << SwitchTable_5);
+		//PORTD |= (1 << SwitchTable_5);
 		
 		break;
 		
@@ -292,8 +292,7 @@ void SoftStart()
 	}
 
 	SetPMWControlMode();
-	//AdjustWay(ChoisenTableNumber);
-
+	
 	for (uint8_t i = 0; i <= 255; i++)
 	{
 		if (!(PINC & (1 << EndWaySensor)) && !(PINA & (1 << ReversPin)))
@@ -344,7 +343,28 @@ void MoveTrain(bool direction)
 	 {
 		 return; 
 	 }	 
-		
+	
+	switch (ChoisenTableNumber)
+	{
+		case 1:
+		PORTB |= (1 << SemaforTable_Pin_1);
+		break;
+		case 2:
+		PORTB |= (1 << SemaforTable_Pin_2);
+		break;
+		case 3:
+		PORTB |= (1 << SemaforTable_Pin_3);
+		break;
+		case 4:
+		PORTD |= (1 << SemaforTable_Pin_4);
+		break;
+		case 5:
+		PORTD |= (1 << SemaforTable_Pin_5);
+		break;
+		default:
+		break;
+	}
+	
     if (direction == 1 && PINA & (1 << ReversPin))
     {
 		StopTrain();
@@ -364,6 +384,8 @@ void MoveTrain(bool direction)
 	SoftStart();
 	
 	IsTrainMoving = true;
+	
+	
 }
 
 
