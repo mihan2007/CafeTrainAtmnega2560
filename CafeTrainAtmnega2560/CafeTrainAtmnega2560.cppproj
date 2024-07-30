@@ -168,22 +168,7 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="buttonsAndSensors.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LEDs.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="main.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="railSwitches.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="trainConfig.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
