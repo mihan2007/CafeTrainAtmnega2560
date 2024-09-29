@@ -19,7 +19,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 00000d77  00000000  00000000  0000206d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000a21  00000000  00000000  00002de4  2**0
+  8 .debug_line   00000a22  00000000  00000000  00002de4  2**0
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00000108  00000000  00000000  00003808  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -288,9 +288,7 @@ void AdjustWay(int ChosenTable)
  196:	84 b3       	in	r24, 0x14	; 20
  198:	82 60       	ori	r24, 0x02	; 2
  19a:	84 bb       	out	0x14, r24	; 20
-		
-		//PORTB |= (1 << SemaforTable_Pin_1);
-		
+				
 		break;
  19c:	d2 c0       	rjmp	.+420    	; 0x342 <_Z9AdjustWayi+0x1fe>
 		

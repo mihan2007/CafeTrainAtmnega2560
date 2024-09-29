@@ -512,10 +512,10 @@ END GROUP
  .debug_abbrev  0x00000000      0xb1a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_abbrev  0x00000b1a      0x25d main.o
 
-.debug_line     0x00000000      0xa21
+.debug_line     0x00000000      0xa22
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1fa C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_line    0x000001fa      0x827 main.o
+ .debug_line    0x000001fa      0x828 main.o
 
 .debug_frame    0x00000000      0x108
  *(.debug_frame)
