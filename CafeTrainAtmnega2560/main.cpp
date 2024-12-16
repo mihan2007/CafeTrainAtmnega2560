@@ -140,7 +140,6 @@ void AdjustWay(int ChosenTable)
 		
 		PORTD |= (1 << SwitchTable_3);
 		
-		//PORTB |= (1 << SemaforTable_Pin_3);
 		break;
 		
 		case 4:
@@ -162,7 +161,6 @@ void AdjustWay(int ChosenTable)
 		
 		PORTC |= (1 << SwitchTable_4);
 		
-		//PORTD |= (1 << SwitchTable_4);
 		break;
 		
 		case 5:
@@ -286,7 +284,7 @@ void SoftStart()
 {
 	if (IsTrainMoving)
 	{
-		return; // ?????? ?? ?????????? ???????, ???? ????? ???????? ????? ?? ??????? 
+		return; 
 	}
 
 	SetPMWControlMode();
@@ -312,12 +310,12 @@ void SoftStart()
         }
 
 		OCR1A = i;  // Set PWM value
-		_delay_ms(SMOOTH_FADE_DOWN_DELAY);  // Delay for smooth ramp-up
+		_delay_ms(SMOOTH_FADE_DOWN_DELAY); 
 
 		if (i >= 250)
 		{			
 			PORTD &= ~(1 << Gear_2_Pin);
-			break;  // Stop the function when OCR1A reaches 250
+			break;  
 		}
 	}
 
@@ -329,15 +327,15 @@ void MoveTrain(bool direction)
 	
 	if (IsTrainMoving)
 	{
-		return; // Exit the loop if the train stops moving
+		return; 
 	}
 	
-	 if (IsTrainOnTheTable && direction == 1) // ???? ????? ????????? ? ?? ????? ?????? ?? ???????? ??????
+	 if (IsTrainOnTheTable && direction == 1) 
 	 {
 		 return;
 	 }
 	 
-	 if (IsTrainOnTheKitchen && direction == 0) // ???? ????? ?? ?? ????? ?????? ???????? ?????
+	 if (IsTrainOnTheKitchen && direction == 0) 
 	 {
 		 return; 
 	 }	 
@@ -514,19 +512,6 @@ int main(void)
 			IsTrainOnTheKitchen = true;
         }
 		
-        // ???????? ????????? ???? ShortSircuitPin
-		/*if (!(PINL & (1 << ShortSircuitPin))) 
-		{		
-			if (IsTrainMoving && ++shortCircuitDelayTime >= 1000) 
-			{
-				StopTrain();
-			}
-		}
-		else 
-		{
-			shortCircuitDelayTime = 0; 		
-		}*/
-
         _delay_ms(50);
 	}
 
